@@ -1,41 +1,28 @@
 #!/usr/bin/env bash
 set -e
 
-read -rp "Sunucu IP: " SERVER_IP
-read -rsp "SSH Şifresi: " SERVER_PASS && echo
+app="scope-kanalegeleri"
+host=$1
+public_port="8080" 
 
-SERVER_USER="elifadmin"
-APP_ROOT="/opt/kanalegeleri-go"
-LOCAL_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-LOCAL_GO_APP="$LOCAL_ROOT/go-app"
+copy="app_binary Dockerfile templates public .env docker-compose.yml"
 
-if ! command -v sshpass >/dev/null 2>&1; then
-  echo "⚙️   sshpass bulunamadı, kuruluyor (Homebrew)..."
-  brew install sshpass
+if [ -z "$host" ]; then
+    read -p "Sunucu IP (host): " host
 fi
 
-SSH="sshpass -p $SERVER_PASS ssh -tt -o StrictHostKeyChecking=no"
+echo "🚀 Dağıtım başlıyor: $host"
+GOOS=linux GOARCH=amd64 go build -o app_binary ./cmd/app/main.go
 
-echo "🛠️   Hedef klasör hazırlanıyor..."
-$SSH "$SERVER_USER@$SERVER_IP" "echo '$SERVER_PASS' | sudo -S mkdir -p '$APP_ROOT/go-app' '$APP_ROOT/public' && echo '$SERVER_PASS' | sudo -S chown -R '$SERVER_USER:$SERVER_USER' '$APP_ROOT'"
+ssh root@$host "mkdir -p /home/$app"
+rsync -avz --delete $copy root@$host:/home/$app/
 
-echo "📦  Go uygulaması kopyalanıyor..."
-sshpass -p "$SERVER_PASS" rsync -az --delete \
-  -e "ssh -o StrictHostKeyChecking=no" \
-  --exclude='.git' \
-  --exclude='uploads' \
-  "$LOCAL_GO_APP/" "$SERVER_USER@$SERVER_IP:$APP_ROOT/go-app/"
+ssh root@$host "cd /home/$app; docker compose down || true"
+ssh root@$host "cd /home/$app; docker compose build --pull"
+ssh root@$host "cd /home/$app; docker compose up -d"
 
-echo "🖼️   Statik görseller kopyalanıyor..."
-sshpass -p "$SERVER_PASS" rsync -az --delete \
-  -e "ssh -o StrictHostKeyChecking=no" \
-  "$LOCAL_ROOT/public/static/" "$SERVER_USER@$SERVER_IP:$APP_ROOT/public/static/"
+ssh root@$host 'docker update --restart unless-stopped $(docker ps -q)'
 
-echo "🔨  Go Docker imajı build ediliyor..."
-$SSH "$SERVER_USER@$SERVER_IP" "cd '$APP_ROOT/go-app' && echo '$SERVER_PASS' | sudo -S docker compose build"
+rm app_binary
 
-echo "▶️   Container'lar başlatılıyor..."
-$SSH "$SERVER_USER@$SERVER_IP" "cd '$APP_ROOT/go-app' && echo '$SERVER_PASS' | sudo -S docker compose up -d --remove-orphans && echo '$SERVER_PASS' | sudo -S docker image prune -f"
-
-echo ""
-echo "🎉  Go deploy tamamlandı! → http://$SERVER_IP:8080"
+echo "✅ Tamamlandı: http://$host:$public_port"

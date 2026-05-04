@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
+	"golang.org/x/crypto/bcrypt"
 	"kanalegeleri/go-app/internal/domain"
 )
 
@@ -24,7 +26,65 @@ func (s *Store) AutoMigrate() error {
 		&domain.Product{},
 		&domain.Order{},
 		&domain.OrderItem{},
+		&domain.Category{},
+		&domain.Admin{},
 	)
+}
+
+// --- Admin ---
+
+func (s *Store) GetAdminByUsername(ctx context.Context, username string) (domain.Admin, bool, error) {
+	var admin domain.Admin
+	err := s.db.WithContext(ctx).Where("username = ?", username).First(&admin).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return domain.Admin{}, false, nil
+	}
+	return admin, err == nil, err
+}
+
+func (s *Store) UpsertAdmin(ctx context.Context, admin domain.Admin) error {
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "username"}},
+			DoUpdates: clause.AssignmentColumns([]string{"password", "updated_at"}),
+		}).
+		Create(&admin).Error
+}
+
+func (s *Store) EnsureAdminExists(ctx context.Context, username, password string) error {
+	var count int64
+	s.db.WithContext(ctx).Model(&domain.Admin{}).Count(&count)
+	if count > 0 {
+		return nil
+	}
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	admin := domain.Admin{
+		Username: username,
+		Password: string(hash),
+	}
+	return s.db.WithContext(ctx).Create(&admin).Error
+}
+
+// --- Categories ---
+
+func (s *Store) AllCategories(ctx context.Context) ([]domain.Category, error) {
+	var categories []domain.Category
+	err := s.db.WithContext(ctx).Order("name asc").Find(&categories).Error
+	return categories, err
+}
+
+func (s *Store) CreateCategory(ctx context.Context, name string) error {
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "name"}},
+			DoNothing: true,
+		}).
+		Create(&domain.Category{Name: name}).Error
+}
+
+func (s *Store) DeleteCategory(ctx context.Context, id int) error {
+	return s.db.WithContext(ctx).Delete(&domain.Category{}, id).Error
 }
 
 // --- Products ---
@@ -87,12 +147,25 @@ func (s *Store) CreateOrder(ctx context.Context, input domain.CreateOrderRequest
 		CustomerAddress: input.CustomerAddress,
 		FullAddress:     input.FullAddress,
 		Note:            input.Note,
+		KVKKAccepted:    input.KVKKAccepted,
+		CustomerIP:      input.CustomerIP,
 		Items:           input.Items,
+		Status:          "Beklemede",
 	}
 	if err := s.db.WithContext(ctx).Create(&order).Error; err != nil {
 		return domain.Order{}, err
 	}
 	return order, nil
+}
+
+func (s *Store) UpdateOrder(ctx context.Context, id int, status, adminNote string) error {
+	return s.db.WithContext(ctx).
+		Model(&domain.Order{}).
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"status":     status,
+			"admin_note": adminNote,
+		}).Error
 }
 
 func (s *Store) AllOrders(ctx context.Context) ([]domain.Order, error) {

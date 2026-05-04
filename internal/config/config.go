@@ -1,97 +1,77 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
-type fileConfig struct {
-	DefaultMode string                 `json:"default_mode"`
-	Modes       map[string]Environment `json:"modes"`
-}
-
-type Environment struct {
-	Server   ServerConfig   `json:"server"`
-	Database DatabaseConfig `json:"database"`
-	Admin    AdminConfig    `json:"admin"`
-	Paths    PathsConfig    `json:"paths"`
-	Telegram TelegramConfig `json:"telegram"`
+type Settings struct {
+	Mode          string
+	Server        ServerConfig
+	Database      DatabaseConfig
+	Admin         AdminConfig
+	Paths         PathsConfig
+	Telegram      TelegramConfig
+	SessionSecret string
+	ContactName   string
+	ContactPhone  string
+	ContactEmail  string
 }
 
 type ServerConfig struct {
-	Address string `json:"address"`
+	Address string
 }
 
 type DatabaseConfig struct {
-	URL string `json:"url"`
+	URL string
 }
 
 type AdminConfig struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string
+	Password string
 }
 
 type PathsConfig struct {
-	TemplatesDir string `json:"templates_dir"`
-	UploadsDir   string `json:"uploads_dir"`
-	StaticDir    string `json:"static_dir"`
+	TemplatesDir string
+	UploadsDir   string
+	StaticDir    string
 }
 
 type TelegramConfig struct {
-	BotToken string `json:"bot_token"`
-	ChatID   string `json:"chat_id"`
+	BotToken string
+	ChatID   string
 }
 
-type Settings struct {
-	Mode string
-	Environment
-}
-
-func Load(configPath string) (Settings, error) {
-	data, err := os.ReadFile(configPath)
-	if err != nil {
-		return Settings{}, fmt.Errorf("config read: %w", err)
-	}
-
-	var parsed fileConfig
-	if err := json.Unmarshal(data, &parsed); err != nil {
-		return Settings{}, fmt.Errorf("config parse: %w", err)
-	}
-
-	mode := strings.TrimSpace(os.Getenv("APP_ENV"))
-	if mode == "" {
-		mode = strings.TrimSpace(parsed.DefaultMode)
-	}
-	if mode == "" {
-		mode = "development"
-	}
-
-	envConfig, ok := parsed.Modes[mode]
-	if !ok {
-		return Settings{}, fmt.Errorf("config mode not found: %s", mode)
-	}
-
-	applyEnvOverrides(&envConfig)
+// Load configurations from environment variables only
+func Load() Settings {
+	mode := envOrDefault("APP_ENV", "development")
 
 	return Settings{
-		Mode:        mode,
-		Environment: envConfig,
-	}, nil
-}
-
-func applyEnvOverrides(cfg *Environment) {
-	cfg.Server.Address = envOrDefault("APP_ADDR", cfg.Server.Address)
-	cfg.Database.URL = envOrDefault("DATABASE_URL", cfg.Database.URL)
-	cfg.Admin.Username = envOrDefault("GO_ADMIN_USERNAME", cfg.Admin.Username)
-	cfg.Admin.Password = envOrDefault("GO_ADMIN_PASSWORD", cfg.Admin.Password)
-	cfg.Telegram.BotToken = envOrDefault("TELEGRAM_BOT_TOKEN", cfg.Telegram.BotToken)
-	cfg.Telegram.ChatID = envOrDefault("TELEGRAM_CHAT_ID", cfg.Telegram.ChatID)
-	cfg.Paths.TemplatesDir = envOrDefault("TEMPLATES_DIR", cfg.Paths.TemplatesDir)
-	cfg.Paths.UploadsDir = envOrDefault("UPLOADS_DIR", cfg.Paths.UploadsDir)
-	cfg.Paths.StaticDir = envOrDefault("STATIC_DIR", cfg.Paths.StaticDir)
+		Mode: mode,
+		Server: ServerConfig{
+			Address: envOrDefault("APP_ADDR", ":8080"),
+		},
+		Database: DatabaseConfig{
+			URL: os.Getenv("DATABASE_URL"),
+		},
+		Admin: AdminConfig{
+			Username: envOrDefault("GO_ADMIN_USERNAME", "admin"),
+			Password: os.Getenv("GO_ADMIN_PASSWORD"),
+		},
+		Telegram: TelegramConfig{
+			BotToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
+			ChatID:   os.Getenv("TELEGRAM_CHAT_ID"),
+		},
+		Paths: PathsConfig{
+			TemplatesDir: envOrDefault("TEMPLATES_DIR", "templates"),
+			UploadsDir:   envOrDefault("UPLOADS_DIR", "uploads"),
+			StaticDir:    envOrDefault("STATIC_DIR", "public/static"),
+		},
+		SessionSecret: envOrDefault("SESSION_SECRET", "super-secret-key-change-me"),
+		ContactName:   envOrDefault("CONTACT_NAME", ""),
+		ContactPhone:  envOrDefault("CONTACT_PHONE", ""),
+		ContactEmail:  envOrDefault("CONTACT_EMAIL", ""),
+	}
 }
 
 func envOrDefault(name, fallback string) string {
@@ -100,22 +80,4 @@ func envOrDefault(name, fallback string) string {
 		return fallback
 	}
 	return value
-}
-
-func ResolveExistingDir(candidates ...string) string {
-	for _, candidate := range candidates {
-		if candidate == "" {
-			continue
-		}
-		if info, err := os.Stat(candidate); err == nil && info.IsDir() {
-			return candidate
-		}
-	}
-	for _, candidate := range candidates {
-		if candidate == "" {
-			continue
-		}
-		return filepath.Clean(candidate)
-	}
-	return "."
 }

@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: ..
-      dockerfile: go-app/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     image: kanalegeleri-go:latest
     container_name: kanalegeleri-go
     restart: unless-stopped
@@ -29,6 +29,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-kanalegeleri}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 

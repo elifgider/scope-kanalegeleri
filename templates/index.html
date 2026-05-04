@@ -1,385 +1,1015 @@
 <!doctype html>
 <html lang="tr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Scope Endo | Go + Bootstrap</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
-      crossorigin="anonymous"
-    />
-    <style>
-      :root {
-        --scope-navy: #0d1b3d;
-        --scope-blue: #1456d9;
-        --scope-cyan: #42d3f5;
-        --scope-ink: #122033;
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scope Endo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --scope-navy: #0d1b3d;
+      --scope-blue: #1456d9;
+      --scope-cyan: #42d3f5;
+      --scope-ink: #122033;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      color: var(--scope-ink);
+      background:
+        radial-gradient(circle at top right, rgba(66, 211, 245, 0.12), transparent 20rem),
+        linear-gradient(180deg, #f7fbff 0%, #ffffff 22rem);
+    }
+
+    .hero-shell {
+      background:
+        radial-gradient(circle at top right, rgba(66, 211, 245, 0.2), transparent 18rem),
+        radial-gradient(circle at bottom left, rgba(20, 86, 217, 0.18), transparent 20rem),
+        linear-gradient(135deg, #081022, #0f2450 60%, #0b1834);
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5vw, 4.5rem);
+      line-height: 1;
+    }
+
+    .product-card {
+      border: 1px solid #e9edf6;
+      border-radius: 1.25rem;
+      /* overflow: hidden; */
+      box-shadow: 0 10px 30px rgba(9, 25, 56, 0.06);
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-frame {
+      aspect-ratio: 1;
+      background: #fff;
+      padding: 1rem;
+    }
+
+    .product-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 1.5rem;
+    }
+
+    .btn-order {
+      background-color: #1e40af !important;
+      border-color: #1e40af !important;
+      color: white !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      padding: 10px 15px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .btn-order:hover {
+      background-color: #1e3a8a !important;
+    }
+
+    .btn-add-cart {
+      background-color: #ecfeff !important;
+      border: 1px solid #a5f3fc !important;
+      color: #0891b2 !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      padding: 10px 15px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .btn-add-cart:hover {
+      background-color: #cffafe !important;
+    }
+
+    .btn-info-icon {
+      background-color: white !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #64748b !important;
+      border-radius: 12px !important;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-info-icon:hover {
+      background-color: #f8fafc !important;
+    }
+
+    .badge-chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid rgba(66, 211, 245, 0.3);
+      background: rgba(66, 211, 245, 0.12);
+      color: #bdf7ff;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .category-pill.active {
+      background: var(--scope-blue);
+      color: #fff;
+      border-color: var(--scope-blue);
+    }
+
+    .cart-qty {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 999px;
+      border: 1px solid #ced8ea;
+      background: #fff;
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: #eef2ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .feature-icon i {
+      width: 32px;
+      height: 32px;
+    }
+
+    .hover-white:hover {
+      color: white !important;
+    }
+
+    .hover-scale {
+      transition: transform 0.2s;
+    }
+
+    .hover-scale:hover {
+      transform: scale(1.1);
+    }
+
+    .text-truncate-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Premium Navbar Styles */
+    .navbar-premium {
+      background: linear-gradient(135deg, rgba(7, 18, 40, 0.94), rgba(12, 34, 74, 0.9) 58%, rgba(8, 22, 48, 0.94)) !important;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22) !important;
+      box-shadow: 0 18px 45px rgba(7, 18, 40, 0.18);
+      transition: all 0.3s ease;
+    }
+
+    .nav-link-premium {
+      color: rgba(226, 232, 240, 0.88) !important;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem !important;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-premium:hover {
+      background: rgba(66, 211, 245, 0.12);
+      color: #ffffff !important;
+    }
+
+    .btn-cart-premium {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.28);
+      border-radius: 12px;
+      padding: 8px 14px;
+      transition: all 0.2s ease;
+      color: #f8fafc;
+    }
+
+    .btn-cart-premium:hover {
+      background: rgba(66, 211, 245, 0.14);
+      border-color: rgba(66, 211, 245, 0.55);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-order-premium {
+      background: linear-gradient(135deg, #42d3f5, #1456d9);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 8px 20px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 24px rgba(20, 86, 217, 0.28);
+    }
+
+    .btn-order-premium:hover {
+      background: linear-gradient(135deg, #67e8f9, #1d4ed8);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(20, 86, 217, 0.36);
+    }
+
+    .navbar-brand img {
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 8px 18px rgba(66, 211, 245, 0.18));
+      display: block !important;
+      height: 65px !important;
+      width: auto !important;
+      max-height: none !important;
+    }
+
+    /* Ürün Kartı Butonları - Dikey Mobil Dizilim */
+    .product-actions-wrapper {
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .product-actions-wrapper {
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      html { scroll-behavior: smooth; }
-      body {
-        color: var(--scope-ink);
-        background:
-          radial-gradient(circle at top right, rgba(66, 211, 245, 0.12), transparent 20rem),
-          linear-gradient(180deg, #f7fbff 0%, #ffffff 22rem);
+      .product-actions-wrapper .btn {
+        width: 100% !important;
+        padding: 10px !important;
+        font-size: 13px !important;
+        justify-content: center !important;
       }
-      .hero-shell {
-        background:
-          radial-gradient(circle at top right, rgba(66, 211, 245, 0.2), transparent 18rem),
-          radial-gradient(circle at bottom left, rgba(20, 86, 217, 0.18), transparent 20rem),
-          linear-gradient(135deg, #081022, #0f2450 60%, #0b1834);
+
+      .product-actions-wrapper .btn-info-icon {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        color: #64748b;
+        margin-top: 0.25rem;
       }
-      .hero-title { font-size: clamp(2.2rem, 5vw, 4.5rem); line-height: 1; }
-      .product-card {
-        border: 1px solid #e9edf6;
-        border-radius: 1.25rem;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(9, 25, 56, 0.06);
+    }
+
+    .navbar-brand:hover img {
+      transform: scale(1.05);
+    }
+
+    .navbar-premium .navbar-toggler {
+      color: #fff;
+    }
+
+    .navbar-premium .navbar-toggler-icon {
+      filter: invert(1) grayscale(1) brightness(1.6);
+    }
+
+    .navbar-premium .badge {
+      background: #42d3f5 !important;
+      color: #071228;
+      box-shadow: 0 0 0 2px rgba(7, 18, 40, 0.9);
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-premium .navbar-collapse {
+        margin-top: 0.85rem;
+        padding: 0.85rem;
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 1rem;
+        background: rgba(7, 18, 40, 0.78);
       }
-      .product-frame { aspect-ratio: 1; background: linear-gradient(180deg, #ffffff, #f2f6fb); }
-      .product-frame img { width: 100%; height: 100%; object-fit: cover; }
-      .badge-chip {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        padding: 0.45rem 0.85rem;
-        border: 1px solid rgba(66, 211, 245, 0.3);
-        background: rgba(66, 211, 245, 0.12);
-        color: #bdf7ff;
-        font-weight: 700;
-        font-size: 0.75rem;
+
+      .navbar-premium .navbar-nav {
+        align-items: stretch !important;
       }
-      .category-pill.active {
-        background: var(--scope-blue);
-        color: #fff;
-        border-color: var(--scope-blue);
+
+      .btn-cart-premium,
+      .btn-order-premium {
+        width: 100%;
+        justify-content: center;
       }
-      .cart-qty {
-        width: 2rem;
-        height: 2rem;
-        border-radius: 999px;
-        border: 1px solid #ced8ea;
-        background: #fff;
+    }
+
+    /* Navbar alignment fixes */
+    .navbar-premium .container {
+      display: flex;
+      align-items: center;
+      min-height: 85px;
+    }
+
+    .navbar-brand {
+      padding: 0 !important;
+      margin-right: 2rem;
+    }
+
+    /* Hero Kartları Özel Stili */
+    .hero-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+
+    .hero-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .upload-preview-placeholder {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 1rem;
+      border: 1px dashed var(--scope-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      background: #f8fafc;
+    }
+
+    /* Modal Panelli Yapı Kaydırma Çözümü */
+    #orderModal .modal-content {
+      border-radius: 1.25rem;
+      overflow: hidden;
+      max-height: 95vh;
+    }
+
+    #orderModal .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto !important;
+      max-height: 70vh;
+      /* Orta kısmın yüksekliğini kısıtlayıp kaydırmayı açıyoruz */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 768px) {
+      #orderModal .modal-body {
+        padding: 1rem;
+        max-height: 65vh;
+        /* Mobilde biraz daha daraltıyoruz ki butonlar görünsün */
       }
-    </style>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm sticky-top">
-      <div class="container py-2">
-        <a class="navbar-brand d-flex align-items-center gap-3 fw-semibold" href="#">
-          <img src="/static/images/scopelogo.png" alt="Scope Endo" height="46" />
-        </a>
-        <div class="d-flex align-items-center gap-2 ms-auto">
-          <a class="btn btn-link text-decoration-none text-dark d-none d-md-inline-flex" href="#products">Ürünler</a>
-          <a class="btn btn-link text-decoration-none text-dark d-none d-md-inline-flex" href="#contact">İletişim</a>
-          <button class="btn btn-outline-primary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartCanvas">
-            <span class="me-1">Sepet</span>
-            <span id="cartCountBadge" class="badge rounded-pill text-bg-info text-dark">0</span>
-          </button>
-          <button class="btn btn-primary" type="button" data-open-order>Sipariş Ver</button>
+    }
+
+    /* Select2 Custom Styles */
+    .select2-container--default .select2-selection--single {
+      height: 48px;
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+      height: 46px;
+    }
+
+    .select2-dropdown {
+      border: 1px solid #dee2e6;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+  </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-premium sticky-top">
+    <div class="container py-1">
+      <a class="navbar-brand d-flex align-items-center fw-semibold" href="#">
+        <img src="/static/images/scopelogo.png" alt="Scope Endo" height="56" />
+      </a>
+
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+        data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center gap-2">
+          <li class="nav-item">
+            <a class="nav-link nav-link-premium" href="#products">Ürünler</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-premium" href="#contact">İletişim</a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <button class="btn btn-cart-premium position-relative d-flex align-items-center gap-2" type="button"
+              data-bs-toggle="offcanvas" data-bs-target="#cartCanvas">
+              <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i>
+              <span class="d-none d-lg-inline">Sepetim</span>
+              <span id="cartCountBadge"
+                class="badge rounded-pill bg-primary position-absolute top-0 start-100 translate-middle">0</span>
+            </button>
+          </li>
+          <li class="nav-item ms-lg-1">
+            <button class="btn btn-primary btn-order-premium d-flex align-items-center gap-2" type="button"
+              data-open-order>
+              <i data-lucide="plus-circle" style="width:18px;height:18px;"></i>
+              Sipariş Ver
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-shell py-5 text-white">
+    <div class="container py-4 py-lg-5">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="badge-chip">BURSA</span>
+            <span class="badge-chip">ESKİŞEHİR</span>
+            <span class="badge-chip">YALOVA</span>
+          </div>
+          <h1 class="hero-title fw-bold mb-4">
+            Scope Endo
+            <span class="d-block text-info">Kanal Eğeleri</span>
+          </h1>
+          <p class="lead text-white-50 mb-3">
+            Siparişinizi oluşturun — en kısa sürede sizinle iletişime geçelim.
+          </p>
+          <p class="small text-white-50 mb-4">
+            <strong class="text-white">{{.ContactName}}</strong>
+            · <a class="link-light text-decoration-none" href="tel:{{.ContactPhone}}">{{.ContactPhone}}</a>
+            · <a class="link-light text-decoration-none" href="mailto:{{.ContactEmail}}">{{.ContactEmail}}</a>
+          </p>
+          <div class="d-grid gap-3 d-md-flex">
+            <button class="btn btn-info btn-lg fw-semibold text-dark px-4" type="button" data-open-order>Sipariş
+              Ver</button>
+          </div>
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            <!-- K7 Gold -->
+            <div class="col">
+              <div class="hero-card h-100">
+                <div class="hero-card-icon" style="background: rgba(255, 193, 7, 0.1);">
+                  <i data-lucide="zap" class="text-warning" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                  <div class="text-warning fw-bold mb-1">K7 Gold</div>
+                  <div class="text-white-50 small">Asr/04 · 06 Serisi</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- K7 Blue -->
+            <div class="col">
+              <div class="hero-card h-100">
+                <div class="hero-card-icon" style="background: rgba(13, 110, 253, 0.15);">
+                  <i data-lucide="shield" class="text-primary" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                  <div class="text-primary fw-bold mb-1">K7 Blue</div>
+                  <div class="text-white-50 small">10 · 15 · 20 Numaralar</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RS Serisi -->
+            <div class="col">
+              <div class="hero-card h-100">
+                <div class="hero-card-icon" style="background: rgba(13, 202, 240, 0.15);">
+                  <i data-lucide="refresh-cw" class="text-info" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                  <div class="text-info fw-bold mb-1">RS Serisi</div>
+                  <div class="text-white-50 small">Reciprocal Çözümler</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Retreatment -->
+            <div class="col">
+              <div class="hero-card h-100">
+                <div class="hero-card-icon" style="background: rgba(220, 53, 69, 0.15);">
+                  <i data-lucide="rotate-ccw" class="text-danger" style="width:24px;height:24px;"></i>
+                </div>
+                <div>
+                  <div class="text-danger fw-bold mb-1">Retreatment</div>
+                  <div class="text-white-50 small">Yeniden Tedavi Eğeleri</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </nav>
+    </div>
+  </section>
 
-    <section class="hero-shell py-5 text-white">
-      <div class="container py-4 py-lg-5">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-6">
-            <div class="d-flex flex-wrap gap-2 mb-4">
-              <span class="badge-chip">BURSA</span>
-              <span class="badge-chip">ESKİŞEHİR</span>
-              <span class="badge-chip">YALOVA</span>
+  <!-- Teknik Özellikler Bölümü -->
+  <section class="py-5 bg-white border-bottom d-none d-md-block">
+    <div class="container text-center py-4">
+      <h2 class="fw-bold mb-5">Scope Endo Teknik Özellikler</h2>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-3">
+          <div class="d-flex flex-column align-items-center">
+            <div class="feature-icon mb-3">
+              <i data-lucide="zap" class="text-primary"></i>
             </div>
-            <h1 class="hero-title fw-bold mb-4">
-              Scope Endo
-              <span class="d-block text-info">Kanal Eğeleri</span>
-            </h1>
-            <p class="lead text-white-50 mb-3">
-              Go backend ve Bootstrap arayüz ile sipariş akışını sadeleştirilmiş şekilde sunar.
-            </p>
-            <p class="small text-white-50 mb-4">
-              <strong class="text-white">İsim Soyisim</strong>
-              · <a class="link-light text-decoration-none" href="tel:0000000000">0XXX XXX XX XX</a>
-              · <a class="link-light text-decoration-none" href="mailto:ornek@mail.com">ornek@mail.com</a>
-            </p>
-            <div class="d-grid gap-3 d-md-flex">
-              <button class="btn btn-info btn-lg fw-semibold text-dark px-4" type="button" data-open-order>Sipariş Ver</button>
-            </div>
+            <h3 class="h6 fw-bold">Yüksek Esneklik</h3>
+            <p class="small text-secondary">Kırılmalara karşı yüksek direnç</p>
           </div>
-          <div class="col-lg-6">
-            <div class="row row-cols-2 g-3">
-              <div class="col"><div class="border border-light border-opacity-25 rounded-4 p-4 h-100 bg-white bg-opacity-10"><div class="text-warning fw-bold small mb-2">K7 Gold</div><div class="text-white-50 small">Asr/04 · 06</div></div></div>
-              <div class="col"><div class="border border-light border-opacity-25 rounded-4 p-4 h-100 bg-white bg-opacity-10"><div class="text-primary fw-bold small mb-2">K7 Blue</div><div class="text-white-50 small">10 · 15 · 20</div></div></div>
-              <div class="col"><div class="border border-light border-opacity-25 rounded-4 p-4 h-100 bg-white bg-opacity-10"><div class="text-info fw-bold small mb-2">RS Serisi</div><div class="text-white-50 small">Reciprocal</div></div></div>
-              <div class="col"><div class="border border-light border-opacity-25 rounded-4 p-4 h-100 bg-white bg-opacity-10"><div class="text-danger fw-bold small mb-2">Retreatment</div><div class="text-white-50 small">Re-treatment</div></div></div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex flex-column align-items-center">
+            <div class="feature-icon mb-3">
+              <i data-lucide="check-circle" class="text-primary"></i>
             </div>
+            <h3 class="h6 fw-bold">Mükemmel Uyum</h3>
+            <p class="small text-secondary">Kanal anatomisine mükemmel uyum</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex flex-column align-items-center">
+            <div class="feature-icon mb-3">
+              <i data-lucide="refresh-cw" class="text-primary"></i>
+            </div>
+            <h3 class="h6 fw-bold">Çoklu Çözüm</h3>
+            <p class="small text-secondary">Hem Rotary hem reciprocal çözümler</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex flex-column align-items-center">
+            <div class="feature-icon mb-3">
+              <i data-lucide="clock" class="text-primary"></i>
+            </div>
+            <h3 class="h6 fw-bold">Hızlı Tedavi</h3>
+            <p class="small text-secondary">Hızlı ve basit tedavi</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="products" class="py-5 bg-body-tertiary">
-      <div class="container">
-        <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center mb-4">
-          <div>
-            <h2 class="display-6 fw-bold mb-1">Ürünlerimiz</h2>
-            <p class="text-secondary mb-0">Go template içine gömülü örnek ürün verileri.</p>
-          </div>
-          <div class="w-100 w-md-auto">
-            <input id="searchInput" type="search" class="form-control form-control-lg" placeholder="Ürün ara..." />
-          </div>
+  <section id="products" class="py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-md-center mb-4">
+        <div>
+          <h2 class="display-6 fw-bold mb-1">Ürünlerimiz</h2>
+
         </div>
-
-        <div id="categoryPills" class="d-flex flex-wrap gap-2 mb-4"></div>
-        <div id="productGrid" class="row g-4"></div>
-      </div>
-    </section>
-
-    <footer id="contact" class="py-5 text-white" style="background:#101826;">
-      <div class="container">
-        <div class="row g-4">
-          <div class="col-md-4">
-            <img src="/static/images/scopelogo.png" alt="Scope Endo" height="44" class="mb-3" />
-            <p class="text-white-50 small mb-0">Endodontik tedavi için geliştirilmiş ürünlerimizle hekimlerin yanındayız.</p>
-          </div>
-          <div class="col-md-4">
-            <h3 class="h6 text-uppercase text-white-50 mb-3">Hızlı Bağlantılar</h3>
-            <div class="d-flex flex-column gap-2 small">
-              <a href="#products" class="link-light text-decoration-none">Ürünler</a>
-              <a href="#contact" class="link-light text-decoration-none">İletişim</a>
-              <button class="btn btn-link p-0 text-start link-light text-decoration-none small" type="button" data-open-order>Sipariş Ver</button>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <h3 class="h6 text-uppercase text-white-50 mb-3">İletişim</h3>
-            <div class="d-flex flex-column gap-2 small">
-              <span class="text-white-50">John Doe</span>
-              <a href="tel:0000000000" class="link-light text-decoration-none">0XXX XXX XX XX</a>
-              <a href="mailto:ornek@mail.com" class="link-light text-decoration-none">ornek@mail.com</a>
-              <span class="text-white-50">Bursa · Eskişehir · Yalova</span>
-            </div>
-          </div>
+        <div class="w-100 w-md-auto">
+          <input id="searchInput" type="search" class="form-control form-control-lg" placeholder="Ürün ara..." />
         </div>
       </div>
-    </footer>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas">
-      <div class="offcanvas-header border-bottom">
+      <div id="categoryPills" class="d-flex flex-wrap gap-2 mb-4"></div>
+      <div id="productGrid" class="row g-4"></div>
+    </div>
+  </section>
+
+  <footer id="contact" class="py-5 text-white" style="background:#0f172a;">
+    <div class="container py-4">
+      <div class="row g-5">
+        <div class="col-lg-4">
+          <img src="/static/images/scopelogo.png" alt="Scope Endo" height="36" class="mb-4"
+            style="filter: brightness(0) invert(1);" />
+          <p class="text-white-50 small mb-0" style="line-height: 1.8;">
+            Endodontik tedavi için geliştirilmiş ürünlerimizle<br>hekimlerin yanındayız.
+          </p>
+        </div>
+        <div class="col-lg-4">
+          <h3 class="h6 text-uppercase fw-bold mb-4 tracking-wider">Hızlı Bağlantılar</h3>
+          <div class="d-flex flex-column gap-3 small">
+            <a href="#products" class="link-light text-decoration-none text-white-50 hover-white">Ürünler</a>
+            <a href="#contact" class="link-light text-decoration-none text-white-50 hover-white">İletişim</a>
+            <a href="javascript:void(0)" class="link-light text-decoration-none text-white-50 hover-white"
+              data-open-order="siparis">Sipariş Oluştur</a>
+            <a href="javascript:void(0)" class="link-light text-decoration-none text-white-50 hover-white"
+              data-open-order="teklif">Teklif İste</a>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <h3 class="h6 text-uppercase fw-bold mb-4 tracking-wider">İletişim</h3>
+          <div class="d-flex flex-column gap-3 small">
+            <div class="d-flex align-items-center gap-2">
+              <span class="text-white">{{.ContactName}}</span>
+            </div>
+            <a href="tel:{{.ContactPhone}}"
+              class="link-light text-decoration-none text-white-50 hover-white">{{.ContactPhone}}</a>
+            <a href="mailto:{{.ContactEmail}}"
+              class="link-light text-decoration-none text-white-50 hover-white">{{.ContactEmail}}</a>
+            <span class="text-white-50">Bursa · Eskişehir · Yalova</span>
+          </div>
+        </div>
+      </div>
+      <div class="border-top border-secondary border-opacity-25 mt-5 pt-4 text-center">
+        <p class="small text-white-50 mb-0">© 2026 Scope Endo. Tüm hakları saklıdır.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartCanvas">
+    <div class="offcanvas-header border-bottom">
+      <div class="d-flex align-items-center gap-2">
+        <i data-lucide="shopping-cart" class="text-primary"></i>
         <div>
           <h2 class="h5 mb-1">Sepetim</h2>
           <p id="cartSummaryText" class="small text-secondary mb-0">Henüz ürün eklemediniz.</p>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Kapat"></button>
       </div>
-      <div class="offcanvas-body d-flex flex-column">
-        <div id="cartItems" class="flex-grow-1"></div>
-        <div class="border-top pt-3 mt-3">
-          <div class="d-flex justify-content-between small text-secondary mb-3">
-            <span>Toplam ürün</span>
-            <strong id="cartTotalQty">0</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Kapat"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      <div id="cartItems" class="flex-grow-1"></div>
+      <div class="border-top pt-3 mt-3">
+        <div class="d-flex justify-content-between small text-secondary mb-3">
+          <span>Toplam ürün</span>
+          <strong id="cartTotalQty">0</strong>
+        </div>
+        <div class="d-grid gap-2">
+          <button type="button" class="btn btn-primary" data-open-order>Sipariş Ver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ürün Detay Modalı -->
+  <div class="modal fade" id="productDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header border-0 pb-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-4">
+            <img id="detailProductImage" src="" alt="" class="img-fluid rounded-4 shadow-sm"
+              style="max-height: 300px; width: auto;">
           </div>
+          <h2 id="detailProductName" class="h4 fw-bold mb-2"></h2>
+          <span id="detailProductCategory" class="badge mb-3" style="background-color: #eff6ff; color: #1e69ff;"></span>
+          <div id="detailProductDescription" class="text-secondary small mb-4"></div>
           <div class="d-grid gap-2">
-            <button type="button" class="btn btn-primary" data-open-order>Sipariş Ver</button>
+            <button id="detailAddToCartBtn" class="btn btn-primary fw-bold py-3" style="border-radius: 12px;">
+              Sepete Ekle
+            </button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header text-white border-0" style="background:linear-gradient(90deg, var(--scope-blue), var(--scope-cyan));">
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <!-- KVKK İçerik Paneli (Başlangıçta Gizli) -->
+        <div id="kvkkPanel" class="d-none">
+          <div class="modal-header bg-light border-0 py-3 px-4">
+            <h5 class="modal-title fw-bold">KVKK Aydınlatma Metni</h5>
+            <button type="button" class="btn-close" onclick="toggleKvkk(false)"></button>
+          </div>
+          <div class="modal-body p-4 small text-secondary"
+            style="line-height: 1.6; max-height: 60vh; overflow-y: auto;">
+            <h6 class="fw-bold text-dark">1. Veri Sorumlusu</h6>
+            <p>Scope Endo olarak, kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu kapsamda,
+              sipariş sürecinde paylaştığınız verileriniz kanuna uygun olarak işlenmektedir.</p>
+            <h6 class="fw-bold text-dark">2. Kişisel Verilerin İşlenme Amacı</h6>
+            <p>Toplanan kişisel verileriniz (Ad, Soyad, Telefon, E-posta, Adres); siparişlerinizin alınması, ürünlerin
+              teslimatı, faturalandırma süreçleri ve sizinle iletişim kurulması amaçlarıyla işlenmektedir.</p>
+            <h6 class="fw-bold text-dark">3. Verilerin Saklanması ve Loglama</h6>
+            <p>Kişisel verileriniz, yasal süreler boyunca ve ispat yükümlülüğü çerçevesinde güvenli bir şekilde
+              saklanmaktadır. Onayınızla birlikte <strong>IP adresiniz ve işlem zamanınız</strong> ispat niteliğinde
+              loglanmaktadır.</p>
+            <h6 class="fw-bold text-dark">4. Haklarınız</h6>
+            <p>KVKK uyarınca verilerinizin işlenip işlenmediğini öğrenme, düzeltilmesini isteme ve silinmesini talep
+              etme haklarına sahipsiniz.</p>
+          </div>
+          <div class="modal-footer border-0 p-4 pt-0">
+            <button type="button" class="btn btn-primary w-100" onclick="toggleKvkk(false)"
+              style="border-radius: 10px;">Anladım, Forma Geri Dön</button>
+          </div>
+        </div>
+
+        <!-- Ana Sipariş Formu Paneli -->
+        <div id="orderMainPanel">
+          <div class="modal-header text-white border-0"
+            style="background:linear-gradient(90deg, var(--scope-blue), var(--scope-cyan));">
             <div>
               <h2 id="orderModalTitle" class="h4 mb-1">Sipariş Oluştur</h2>
-              <p id="orderModalSubtitle" class="small mb-0 text-white-50">Seçtiğiniz ürünler için sipariş talebinizi gönderin.</p>
+              <p id="orderModalSubtitle" class="small mb-0 text-white-50">Seçtiğiniz ürünler için sipariş talebinizi
+                gönderin.</p>
             </div>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
           </div>
-          <form id="orderForm">
+          <form id="orderForm" class="needs-validation" novalidate>
             <div class="modal-body p-4">
+              <div id="orderError" class="alert alert-danger mb-4 d-none"></div>
+              <div id="orderSuccess" class="alert alert-success mb-4 d-none"></div>
+
               <div class="mb-4">
-                <h3 class="h6 mb-3">Sipariş Özeti</h3>
-                <div id="modalCartItems" class="border rounded-4 overflow-hidden"></div>
-              </div>
+                <h3 class="h6 mb-3 d-flex justify-content-between align-items-center">
+                  <span>Sipariş Özeti</span>
+                  <span class="badge bg-light text-dark fw-normal border" id="modalItemCount">0 Ürün</span>
+                </h3>
+
+                <!-- Ürün Ekleme Alanı (Select2) -->
+                <div class="bg-light p-3 rounded-4 mb-3 border">
+                  <label class="form-label small fw-bold text-secondary">Yeni Ürün Ekle</label>
+                  <div class="d-flex gap-2">
+                    <div class="flex-grow-1">
+                      <select id="productSelect" class="form-select" style="width: 100%;">
+                        <option value="">Ürün seçin...</option>
+                      </select>
+                    </div>
+                    <button type="button" id="addProductFromModal"
+                      class="btn btn-primary d-flex align-items-center justify-content-center gap-2 px-3"
+                      style="height: 48px; border-radius: 12px;">
+                      <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
+                      <span class="fw-bold">Ekle</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div id="modalCartItems" class="border rounded-4 overflow-hidden bg-white mb-4"></div>
+              </div> <!-- Sipariş Özeti (mb-4) Kapanış -->
+
               <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Ad Soyad</label><input class="form-control" name="customerName" required /></div>
-                <div class="col-md-6"><label class="form-label">E-posta</label><input class="form-control" type="email" name="customerEmail" required /></div>
-                <div class="col-md-6"><label class="form-label">Telefon</label><input class="form-control" name="customerPhone" required /></div>
-                <div class="col-md-6"><label class="form-label">Şehir / İlçe</label><input class="form-control" name="customerAddress" required /></div>
-                <div class="col-12"><label class="form-label">Teslimat Adresi</label><textarea class="form-control" rows="3" name="fullAddress"></textarea></div>
-                <div class="col-12"><label class="form-label">Not</label><textarea class="form-control" rows="3" name="note"></textarea></div>
-              </div>
-              <div id="orderError" class="alert alert-danger mt-3 d-none mb-0"></div>
-              <div id="orderSuccess" class="alert alert-success mt-3 d-none mb-0"></div>
-            </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Ad Soyad</label>
+                  <input class="form-control" name="customerName" placeholder="Örn: Ahmet Yılmaz" required />
+                  <div class="invalid-feedback text-start">Lütfen isminizi giriniz.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">E-posta</label>
+                  <input class="form-control" type="email" name="customerEmail" placeholder="ahmet@example.com"
+                    required />
+                  <div class="invalid-feedback text-start">Geçerli bir e-posta adresi giriniz.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Telefon</label>
+                  <input class="form-control" type="tel" name="customerPhone" placeholder="05xx xxx xx xx" required />
+                  <div class="invalid-feedback text-start">Lütfen telefon numaranızı giriniz.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Şehir / İlçe</label>
+                  <input class="form-control" name="customerAddress" placeholder="Bursa / Nilüfer" required />
+                  <div class="invalid-feedback text-start">Lütfen şehir ve ilçe belirtiniz.</div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Teslimat Adresi</label>
+                  <textarea class="form-control" rows="3" name="fullAddress"
+                    placeholder="Tam adresinizi buraya yazabilirsiniz..." required></textarea>
+                  <div class="invalid-feedback text-start">Lütfen teslimat adresini giriniz.</div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-bold">Not (Opsiyonel)</label>
+                  <textarea class="form-control" rows="2" name="note"
+                    placeholder="Siparişinizle ilgili belirtmek istediğiniz bir not var mı?"></textarea>
+                </div>
+                <!-- Honeypot field for bot protection (Hidden from users) -->
+                <div style="display:none !important; position:absolute; left:-9999px;">
+                  <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="col-12 mt-4">
+                  <div class="bg-light p-3 rounded-3 border">
+                    <div class="form-check d-flex align-items-start gap-2 ps-0 mb-0">
+                      <input class="form-check-input flex-shrink-0 ms-0" type="checkbox" id="kvkkCheck" required
+                        style="margin-top: 0.3rem;">
+                      <label class="form-check-label small text-secondary mb-0" for="kvkkCheck"
+                        style="cursor: pointer;">
+                        <span class="fw-bold text-dark">KVKK Onayı:</span> Kişisel verilerimin işlenmesine ilişkin <a
+                          href="javascript:void(0)" class="text-primary text-decoration-none fw-semibold"
+                          onclick="toggleKvkk(true)">Aydınlatma Metni</a>'ni okudum ve onaylıyorum.
+                      </label>
+                    </div>
+                    <div class="invalid-feedback mt-2">Devam etmek için KVKK metnini onaylamalısınız.</div>
+                  </div>
+                </div>
+              </div> <!-- .row g-3 kapanış -->
+            </div> <!-- .modal-body kapanış -->
             <div class="modal-footer border-0 p-4 pt-0">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Kapat</button>
-              <button id="submitOrderButton" type="submit" class="btn btn-primary">Gönder</button>
+              <button id="submitOrderButton" type="submit" class="btn btn-primary px-4">Sipariş Oluştur</button>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
+        </div> <!-- #orderMainPanel Kapanış -->
+      </div> <!-- .modal-content kapanış -->
+    </div> <!-- .modal-dialog kapanış -->
+  </div> <!-- #orderModal kapanış -->
 
-    <script>
-      const products = {{ .Products }};
-    </script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-      const cartStorageKey = 'scope-endo-go-cart';
-      const productGrid = document.getElementById('productGrid');
-      const categoryPills = document.getElementById('categoryPills');
-      const searchInput = document.getElementById('searchInput');
-      const cartCountBadge = document.getElementById('cartCountBadge');
-      const cartSummaryText = document.getElementById('cartSummaryText');
-      const cartItemsContainer = document.getElementById('cartItems');
-      const cartTotalQty = document.getElementById('cartTotalQty');
-      const modalCartItems = document.getElementById('modalCartItems');
-      const orderError = document.getElementById('orderError');
-      const orderSuccess = document.getElementById('orderSuccess');
-      const submitOrderButton = document.getElementById('submitOrderButton');
-      const orderModalElement = document.getElementById('orderModal');
-      const orderModal = new bootstrap.Modal(orderModalElement);
-      const cartCanvasElement = document.getElementById('cartCanvas');
-      const cartCanvas = new bootstrap.Offcanvas(cartCanvasElement);
+  <script>
+    const products = {{ .Products }};
+  </script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    const cartStorageKey = 'scope-endo-go-cart';
+    const productGrid = document.getElementById('productGrid');
+    const categoryPills = document.getElementById('categoryPills');
+    const searchInput = document.getElementById('searchInput');
+    const cartCountBadge = document.getElementById('cartCountBadge');
+    const cartSummaryText = document.getElementById('cartSummaryText');
+    const cartItemsContainer = document.getElementById('cartItems');
+    const cartTotalQty = document.getElementById('cartTotalQty');
+    const modalCartItems = document.getElementById('modalCartItems');
+    const orderError = document.getElementById('orderError');
+    const orderSuccess = document.getElementById('orderSuccess');
+    const submitOrderButton = document.getElementById('submitOrderButton');
+    const orderModalElement = document.getElementById('orderModal');
+    const orderModal = new bootstrap.Modal(orderModalElement);
+    const cartCanvasElement = document.getElementById('cartCanvas');
+    const cartCanvas = new bootstrap.Offcanvas(cartCanvasElement);
 
-      let cart = [];
-      let selectedCategory = 'Tümü';
-      function loadCart() {
-        try {
-          const stored = window.localStorage.getItem(cartStorageKey);
-          cart = stored ? JSON.parse(stored) : [];
-        } catch {
-          cart = [];
-        }
+    let cart = [];
+    let selectedCategory = 'Tümü';
+    function loadCart() {
+      try {
+        const stored = window.localStorage.getItem(cartStorageKey);
+        cart = stored ? JSON.parse(stored) : [];
+      } catch {
+        cart = [];
       }
+    }
 
-      function saveCart() {
-        window.localStorage.setItem(cartStorageKey, JSON.stringify(cart));
-      }
+    function saveCart() {
+      window.localStorage.setItem(cartStorageKey, JSON.stringify(cart));
+    }
 
-      function totalItems() {
-        return cart.reduce((sum, item) => sum + item.quantity, 0);
-      }
+    function totalItems() {
+      return cart.reduce((sum, item) => sum + item.quantity, 0);
+    }
 
-      function renderCategories() {
-        const categories = ['Tümü', ...new Set(products.map((item) => item.category))];
-        categoryPills.innerHTML = categories.map((category) => `
+    function renderCategories() {
+      const categories = ['Tümü', ...new Set(products.map((item) => item.category))];
+      categoryPills.innerHTML = categories.map((category) => `
           <button type="button" class="btn btn-sm rounded-pill border category-pill ${selectedCategory === category ? 'active' : 'btn-light'}" data-category="${category}">
             ${category}
           </button>
         `).join('');
 
-        categoryPills.querySelectorAll('[data-category]').forEach((button) => {
-          button.addEventListener('click', () => {
-            selectedCategory = button.dataset.category;
-            renderCategories();
-            renderProducts();
-          });
+      categoryPills.querySelectorAll('[data-category]').forEach((button) => {
+        button.addEventListener('click', () => {
+          selectedCategory = button.dataset.category;
+          renderCategories();
+          renderProducts();
+        });
+      });
+    }
+
+    function filteredProducts() {
+      const term = searchInput.value.trim().toLowerCase();
+      return products.filter((product) => {
+        const matchesCategory = selectedCategory === 'Tümü' || product.category === selectedCategory;
+        const text = `${product.name} ${product.description}`.toLowerCase();
+        return matchesCategory && text.includes(term);
+      });
+    }
+
+    function addToCart(productId) {
+      const product = products.find((item) => item.id === productId);
+      if (!product) return;
+
+      const existing = cart.find((item) => item.productId === productId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          productId: product.id,
+          productName: product.name,
+          quantity: 1,
         });
       }
 
-      function filteredProducts() {
-        const term = searchInput.value.trim().toLowerCase();
-        return products.filter((product) => {
-          const matchesCategory = selectedCategory === 'Tümü' || product.category === selectedCategory;
-          const text = `${product.name} ${product.description}`.toLowerCase();
-          return matchesCategory && text.includes(term);
-        });
-      }
+      saveCart();
+      renderCart();
+      cartCanvas.show();
+    }
 
-      function addToCart(productId) {
-        const product = products.find((item) => item.id === productId);
-        if (!product) return;
+    function updateCartItem(productId, quantity) {
+      if (quantity < 1) return;
+      cart = cart.map((item) => item.productId === productId ? { ...item, quantity } : item);
+      saveCart();
+      renderCart();
+    }
 
-        const existing = cart.find((item) => item.productId === productId);
-        if (existing) {
-          existing.quantity += 1;
-        } else {
-          cart.push({
-            productId: product.id,
-            productName: product.name,
-            quantity: 1,
-          });
-        }
+    function removeCartItem(productId) {
+      cart = cart.filter((item) => item.productId !== productId);
+      saveCart();
+      renderCart();
+    }
 
-        saveCart();
-        renderCart();
-        cartCanvas.show();
-      }
-
-      function updateCartItem(productId, quantity) {
-        if (quantity < 1) return;
-        cart = cart.map((item) => item.productId === productId ? { ...item, quantity } : item);
-        saveCart();
-        renderCart();
-      }
-
-      function removeCartItem(productId) {
-        cart = cart.filter((item) => item.productId !== productId);
-        saveCart();
-        renderCart();
-      }
-
-      function renderProducts() {
-        const items = filteredProducts();
-        productGrid.innerHTML = items.map((product) => `
+    function renderProducts() {
+      const items = filteredProducts();
+      productGrid.innerHTML = items.map((product) => `
           <div class="col-6 col-lg-3">
             <article class="product-card h-100 bg-white">
-              <div class="product-frame p-3">
+              <div class="product-frame">
                 <img src="${product.image_url}" alt="${product.name}" />
               </div>
               <div class="p-3 d-flex flex-column h-100">
-                <span class="badge text-bg-primary-subtle text-primary fw-semibold align-self-start mb-2">${product.category}</span>
-                <h3 class="h6 fw-semibold mb-3">${product.name}</h3>
-                <div class="mt-auto d-grid gap-2">
-                  <button type="button" class="btn btn-primary btn-sm" data-buy="${product.id}">Sipariş Ver</button>
-                  <button type="button" class="btn btn-info btn-sm text-dark" data-add="${product.id}">Sepete Ekle</button>
+                <div class="mb-2">
+                  <span class="badge" style="background-color: #eff6ff; color: #1e69ff; border-radius: 0.5rem; padding: 0.5rem 0.8rem;">${product.category}</span>
+                </div>
+                <h3 class="h6 fw-bold mb-4" style="color: #0f172a; line-height: 1.4;">${product.name}</h3>
+                
+                <div class="mt-auto product-actions-wrapper">
+                  <button type="button" class="btn btn-order" data-buy="${product.id}">
+                    <i data-lucide="shopping-cart"></i>
+                    <span>Sipariş Ver</span>
+                  </button>
+                  <button type="button" class="btn btn-add-cart" data-add="${product.id}">
+                    <i data-lucide="plus"></i>
+                    <span>Sepete Ekle</span>
+                  </button>
+                  <button type="button" class="btn btn-info-icon" title="Detaylar" onclick="openProductDetail(${product.id})">
+                    <i data-lucide="file-text"></i>
+                    <span class="d-md-none">Detaylar</span>
+                  </button>
                 </div>
               </div>
             </article>
           </div>
         `).join('');
 
-        productGrid.querySelectorAll('[data-buy]').forEach((button) => {
-          button.addEventListener('click', () => {
-            const productId = Number(button.dataset.buy);
-            const product = products.find((item) => item.id === productId);
-            if (!product) return;
-            openOrderModal([{ productId, productName: product.name, quantity: 1 }]);
-          });
+      productGrid.querySelectorAll('[data-buy]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = Number(button.dataset.buy);
+          const product = products.find((item) => item.id === productId);
+          if (!product) return;
+          openOrderModal([{ productId, productName: product.name, quantity: 1 }]);
         });
+      });
 
-        productGrid.querySelectorAll('[data-add]').forEach((button) => {
-          button.addEventListener('click', () => addToCart(Number(button.dataset.add)));
-        });
+      productGrid.querySelectorAll('[data-add]').forEach((button) => {
+        button.addEventListener('click', () => addToCart(Number(button.dataset.add)));
+      });
+
+      // İkonları yeniden oluştur (Arama sonrası kaybolmaması için)
+      lucide.createIcons();
+    }
+
+    function renderCart() {
+      const total = totalItems();
+      cartCountBadge.textContent = total;
+      cartTotalQty.textContent = total;
+      cartSummaryText.textContent = total > 0 ? `${total} ürün hazır` : 'Henüz ürün eklemediniz.';
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="text-secondary small mb-0">Sepetiniz boş.</p>';
+        return;
       }
 
-      function renderCart() {
-        const total = totalItems();
-        cartCountBadge.textContent = total;
-        cartTotalQty.textContent = total;
-        cartSummaryText.textContent = total > 0 ? `${total} ürün hazır` : 'Henüz ürün eklemediniz.';
-
-        if (cart.length === 0) {
-          cartItemsContainer.innerHTML = '<p class="text-secondary small mb-0">Sepetiniz boş.</p>';
-          return;
-        }
-
-        cartItemsContainer.innerHTML = cart.map((item) => `
+      cartItemsContainer.innerHTML = cart.map((item) => `
           <div class="border rounded-4 p-3 mb-3">
             <div class="d-flex justify-content-between gap-3">
               <div class="min-w-0">
                 <div class="fw-semibold small text-truncate">${item.productName}</div>
                 <div class="text-secondary small">Sipariş için seçildi</div>
               </div>
-              <button class="btn btn-sm btn-outline-danger" type="button" data-remove-cart="${item.productId}">Sil</button>
+              <button class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1" type="button" data-remove-cart="${item.productId}">
+                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                Sil
+              </button>
             </div>
             <div class="d-flex align-items-center gap-2 mt-3">
               <button type="button" class="cart-qty" data-dec-cart="${item.productId}">−</button>
@@ -389,118 +1019,272 @@
           </div>
         `).join('');
 
-        cartItemsContainer.querySelectorAll('[data-remove-cart]').forEach((button) => {
-          button.addEventListener('click', () => removeCartItem(Number(button.dataset.removeCart)));
+      lucide.createIcons();
+
+      cartItemsContainer.querySelectorAll('[data-remove-cart]').forEach((button) => {
+        button.addEventListener('click', () => removeCartItem(Number(button.dataset.removeCart)));
+      });
+      cartItemsContainer.querySelectorAll('[data-dec-cart]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = Number(button.dataset.decCart);
+          const current = cart.find((item) => item.productId === productId);
+          if (!current) return;
+          if (current.quantity === 1) {
+            removeCartItem(productId);
+            return;
+          }
+          updateCartItem(productId, current.quantity - 1);
         });
-        cartItemsContainer.querySelectorAll('[data-dec-cart]').forEach((button) => {
-          button.addEventListener('click', () => {
-            const productId = Number(button.dataset.decCart);
-            const current = cart.find((item) => item.productId === productId);
-            if (!current) return;
-            if (current.quantity === 1) {
-              removeCartItem(productId);
-              return;
-            }
-            updateCartItem(productId, current.quantity - 1);
-          });
+      });
+      cartItemsContainer.querySelectorAll('[data-inc-cart]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = Number(button.dataset.incCart);
+          const current = cart.find((item) => item.productId === productId);
+          if (!current) return;
+          updateCartItem(productId, current.quantity + 1);
         });
-        cartItemsContainer.querySelectorAll('[data-inc-cart]').forEach((button) => {
-          button.addEventListener('click', () => {
-            const productId = Number(button.dataset.incCart);
-            const current = cart.find((item) => item.productId === productId);
-            if (!current) return;
-            updateCartItem(productId, current.quantity + 1);
-          });
-        });
+      });
+    }
+
+    function renderModalItems(items) {
+      document.getElementById('modalItemCount').textContent = `${items.length} Ürün`;
+
+      if (items.length === 0) {
+        modalCartItems.innerHTML = '<div class="p-4 text-center text-secondary small">Henüz ürün seçilmedi.</div>';
+        return;
       }
 
-      function renderModalItems(items) {
-        modalCartItems.innerHTML = items.map((item) => `
+      modalCartItems.innerHTML = items.map((item, index) => `
           <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
-            <div class="small fw-semibold">${item.productName}</div>
-            <span class="badge text-bg-light">${item.quantity} adet</span>
+            <div class="d-flex align-items-center gap-3 min-w-0">
+              <div class="bg-primary bg-opacity-10 text-primary small fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style="width: 32px; height: 32px; border-radius: 8px;">
+                ${index + 1}
+              </div>
+              <div class="small fw-semibold text-dark text-truncate">${item.productName}</div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3 flex-shrink-0">
+              <div class="d-flex align-items-center gap-2 bg-light rounded-3 px-2 py-1 border">
+                <button type="button" class="btn btn-sm p-0 d-flex align-items-center justify-content-center" style="width: 22px; height: 22px;" onclick="updateItemQtyInModal(${item.productId}, -1)">-</button>
+                <span class="small fw-bold px-1" style="min-width: 24px; text-align: center;">${item.quantity}</span>
+                <button type="button" class="btn btn-sm p-0 d-flex align-items-center justify-content-center" style="width: 22px; height: 22px;" onclick="updateItemQtyInModal(${item.productId}, 1)">+</button>
+              </div>
+              <button type="button" class="btn btn-sm btn-link text-danger p-0 border-0" onclick="removeItemFromModal(${item.productId})" title="Sil">
+                <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+              </button>
+            </div>
           </div>
         `).join('');
-      }
+      lucide.createIcons();
+    }
 
-      function openOrderModal(items = cart) {
-        if (!items || items.length === 0) {
-          cartCanvas.show();
+    window.updateItemQtyInModal = function (productId, change) {
+      let items = JSON.parse(document.getElementById('orderForm').dataset.items || '[]');
+      const item = items.find(i => i.productId === productId);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity < 1) {
+          removeItemFromModal(productId);
           return;
         }
-
-        orderError.classList.add('d-none');
-        orderSuccess.classList.add('d-none');
-        document.getElementById('orderForm').reset();
-        renderModalItems(items);
-        document.getElementById('orderModalTitle').textContent = 'Sipariş Ver';
-        document.getElementById('orderModalSubtitle').textContent = 'Sepetinizdeki ürünler için sipariş talebinizi oluşturun.';
         document.getElementById('orderForm').dataset.items = JSON.stringify(items);
-        orderModal.show();
+        renderModalItems(items);
       }
+    };
 
-      document.querySelectorAll('[data-open-order]').forEach((button) => {
-        button.addEventListener('click', () => openOrderModal());
+    window.removeItemFromModal = function (productId) {
+      let items = JSON.parse(document.getElementById('orderForm').dataset.items || '[]');
+      items = items.filter(i => i.productId !== productId);
+      document.getElementById('orderForm').dataset.items = JSON.stringify(items);
+      renderModalItems(items);
+    };
+
+    // KVKK Panel Geçişi (Global Fonksiyon)
+    window.toggleKvkk = function (show) {
+      const mainPanel = document.getElementById('orderMainPanel');
+      const kvkkPanel = document.getElementById('kvkkPanel');
+      if (show) {
+        mainPanel.classList.add('d-none');
+        kvkkPanel.classList.remove('d-none');
+      } else {
+        mainPanel.classList.remove('d-none');
+        kvkkPanel.classList.add('d-none');
+      }
+    };
+
+    // Initialize Select2 and Modal logic
+    $(document).ready(function () {
+      // Select2'yi ürünlerle doldur
+      const selectData = products.map(p => ({ id: p.id, text: p.name }));
+      $('#productSelect').select2({
+        data: selectData,
+        dropdownParent: $('#orderModal'),
+        placeholder: 'Ürün ara...',
+        allowClear: true
       });
 
-      document.getElementById('orderForm').addEventListener('submit', (event) => {
-        event.preventDefault();
-        orderError.classList.add('d-none');
-        orderSuccess.classList.add('d-none');
+      // Modal içinden ürün ekleme
+      $('#addProductFromModal').on('click', function () {
+        const productId = Number($('#productSelect').val());
+        if (!productId) return;
 
-        const items = JSON.parse(document.getElementById('orderForm').dataset.items || '[]');
-        if (!items.length) {
-          orderError.textContent = 'Lütfen önce sepetinize ürün ekleyin.';
-          orderError.classList.remove('d-none');
-          return;
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        let items = JSON.parse(document.getElementById('orderForm').dataset.items || '[]');
+        const existing = items.find(i => i.productId === productId);
+
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          items.push({
+            productId: product.id,
+            productName: product.name,
+            quantity: 1
+          });
         }
 
-        submitOrderButton.disabled = true;
-        submitOrderButton.textContent = 'Gönderiliyor...';
-
-        const formData = new FormData(event.currentTarget);
-        fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            formType: 'order',
-            customerName: formData.get('customerName'),
-            customerEmail: formData.get('customerEmail'),
-            customerPhone: formData.get('customerPhone'),
-            customerAddress: formData.get('customerAddress'),
-            fullAddress: formData.get('fullAddress'),
-            note: formData.get('note'),
-            items,
-          }),
-        })
-          .then(async (response) => {
-            const payload = await response.json();
-            if (!response.ok) {
-              throw new Error(payload.error || 'Gönderim başarısız');
-            }
-
-            orderSuccess.textContent = 'Talebiniz kaydedildi. En kısa sürede sizinle iletişime geçeceğiz.';
-            orderSuccess.classList.remove('d-none');
-            cart = [];
-            saveCart();
-            renderCart();
-          })
-          .catch((error) => {
-            orderError.textContent = error.message || 'Bir hata oluştu.';
-            orderError.classList.remove('d-none');
-          })
-          .finally(() => {
-            submitOrderButton.disabled = false;
-            submitOrderButton.textContent = 'Gönder';
-          });
+        document.getElementById('orderForm').dataset.items = JSON.stringify(items);
+        renderModalItems(items);
+        $('#productSelect').val(null).trigger('change');
       });
+    });
 
-      searchInput.addEventListener('input', renderProducts);
+    window.openProductDetail = function (productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
 
-      loadCart();
-      renderCategories();
-      renderProducts();
-      renderCart();
-    </script>
-  </body>
+      document.getElementById('detailProductImage').src = product.image_url;
+      document.getElementById('detailProductName').textContent = product.name;
+      document.getElementById('detailProductCategory').textContent = product.category;
+      document.getElementById('detailProductDescription').textContent = product.description || 'Bu ürün için detaylı açıklama bulunmamaktadır.';
+
+      const addBtn = document.getElementById('detailAddToCartBtn');
+      addBtn.onclick = () => {
+        addToCart(productId);
+        bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide();
+      };
+
+      const detailModal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+      detailModal.show();
+    };
+
+    function openOrderModal(items = cart, type = 'siparis') {
+      // Panelleri Sıfırla (Her zaman form ile başla)
+      if (typeof window.toggleKvkk === 'function') {
+        window.toggleKvkk(false);
+      }
+
+      orderError.classList.add('d-none');
+      orderSuccess.classList.add('d-none');
+      document.getElementById('orderForm').reset();
+
+      renderModalItems(items);
+
+      const isTeklif = type === 'teklif';
+      document.getElementById('orderModalTitle').textContent = isTeklif ? 'Teklif İste' : 'Sipariş Ver';
+      document.getElementById('orderModalSubtitle').textContent = isTeklif
+        ? 'Seçtiğiniz ürünler için fiyat teklifi talebinizi iletin.'
+        : 'Sipariş talebinizi oluşturun.';
+
+      submitOrderButton.textContent = isTeklif ? 'Teklif İste' : 'Sipariş Oluştur';
+
+      document.getElementById('orderForm').dataset.items = JSON.stringify(items);
+
+      // Sepet boşsa bile modalı açıyoruz
+      orderModal.show();
+    }
+
+    document.querySelectorAll('[data-open-order]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const type = button.dataset.openOrder || 'siparis';
+        openOrderModal(cart, type);
+      });
+    });
+
+    document.getElementById('orderForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const form = event.currentTarget;
+
+      orderError.classList.add('d-none');
+      orderSuccess.classList.add('d-none');
+
+      // Bootstrap validation kontrolü
+      if (!form.checkValidity()) {
+        event.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+
+      const items = JSON.parse(form.dataset.items || '[]');
+      if (!items.length) {
+        orderError.textContent = 'Lütfen önce sepetinize ürün ekleyin.';
+        orderError.classList.remove('d-none');
+        return;
+      }
+
+      submitOrderButton.disabled = true;
+      submitOrderButton.textContent = 'Gönderiliyor...';
+
+      const formData = new FormData(event.currentTarget);
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formType: document.getElementById('orderModalTitle').textContent === 'Teklif İste' ? 'teklif' : 'siparis',
+          customerName: formData.get('customerName'),
+          customerEmail: formData.get('customerEmail'),
+          customerPhone: formData.get('customerPhone'),
+          customerAddress: formData.get('customerAddress'),
+          fullAddress: formData.get('fullAddress'),
+          note: formData.get('note'),
+          website: formData.get('website'), // Honeypot
+          kvkkAccepted: document.getElementById('kvkkCheck').checked,
+          items,
+        }),
+      })
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload.error || 'Gönderim başarısız');
+          }
+
+          // Başarı durumunda modalı kapat ve SweetAlert göster
+          orderModal.hide();
+
+          Swal.fire({
+            title: 'Başarılı!',
+            text: 'Talebiniz kaydedildi. En kısa sürede sizinle iletişime geçeceğiz.',
+            icon: 'success',
+            confirmButtonText: 'Tamam',
+            confirmButtonColor: '#1456d9',
+            customClass: {
+              popup: 'rounded-4'
+            }
+          });
+
+          cart = [];
+          saveCart();
+          renderCart();
+        })
+        .catch((error) => {
+          orderError.textContent = error.message || 'Bir hata oluştu.';
+          orderError.classList.remove('d-none');
+        })
+        .finally(() => {
+          submitOrderButton.disabled = false;
+          submitOrderButton.textContent = document.getElementById('orderModalTitle').textContent === 'Teklif İste' ? 'Teklif İste' : 'Sipariş Oluştur';
+        });
+    });
+
+    searchInput.addEventListener('input', renderProducts);
+
+    loadCart();
+    renderCategories();
+    renderProducts();
+    renderCart();
+    lucide.createIcons();
+  </script>
+</body>
+
 </html>

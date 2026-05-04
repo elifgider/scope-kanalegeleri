@@ -1,31 +1,23 @@
-FROM golang:1.24-alpine AS builder
-WORKDIR /src
+# En küçük ve hızlı imaj
+FROM debian:bookworm-slim
 
-COPY go-app/go.mod go-app/go.sum ./go-app/
-WORKDIR /src/go-app
-RUN go mod download
+# Gerekli sistem paketleri (SSL ve saat dilimi için)
+RUN apt-get update && apt-get install -y ca-certificates tzdata && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /src
-COPY go-app ./go-app
-COPY public ./public
-
-WORKDIR /src/go-app
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/kanalegeleri-go .
-
-FROM alpine:3.21
 WORKDIR /app
 
-RUN addgroup -S app && adduser -S app -G app
+# Bilgisayarımızda derlediğimiz binary dosyasını kopyalıyoruz
+COPY app_binary .
 
-COPY --from=builder /out/kanalegeleri-go /app/kanalegeleri-go
-COPY --from=builder /src/go-app/config /app/config
-COPY --from=builder /src/go-app/templates /app/templates
-COPY --from=builder /src/public/static /app/public/static
+# Diğer statik klasörleri kopyalıyoruz
+COPY templates/ ./templates/
+COPY public/ ./public/
+COPY .env .
 
-RUN mkdir -p /app/uploads && chown -R app:app /app
-
-USER app
+# Klasör izinleri
+RUN mkdir -p uploads data && chmod 777 uploads data
 
 EXPOSE 8080
 
-CMD ["/app/kanalegeleri-go"]
+# Uygulamayı başlat
+CMD ["./app_binary"]

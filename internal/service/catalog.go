@@ -13,6 +13,10 @@ type CatalogRepository interface {
 	CreateProduct(ctx context.Context, product domain.Product) error
 	UpdateProduct(ctx context.Context, product domain.Product) error
 	DeleteProduct(ctx context.Context, id int) error
+
+	AllCategories(ctx context.Context) ([]domain.Category, error)
+	CreateCategory(ctx context.Context, name string) error
+	DeleteCategory(ctx context.Context, id int) error
 }
 
 type CatalogService struct {
@@ -62,4 +66,23 @@ func (s *CatalogService) DeleteProduct(ctx context.Context, id int) error {
 		return ErrInvalidProductID
 	}
 	return s.repo.DeleteProduct(ctx, id)
+}
+
+func (s *CatalogService) ListCategories(ctx context.Context) ([]domain.Category, error) {
+	return s.repo.AllCategories(ctx)
+}
+
+func (s *CatalogService) CreateCategory(ctx context.Context, name string) error {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return ErrInvalidCategoryName
+	}
+	return s.repo.CreateCategory(ctx, name)
+}
+
+func (s *CatalogService) DeleteCategory(ctx context.Context, id int) error {
+	if id < 1 {
+		return ErrInvalidCategoryID
+	}
+	return s.repo.DeleteCategory(ctx, id)
 }

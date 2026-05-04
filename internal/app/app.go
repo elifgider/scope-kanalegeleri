@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
@@ -21,11 +22,12 @@ import (
 )
 
 func Run() error {
-	configPath := "config/config.json"
-	cfg, err := config.Load(configPath)
-	if err != nil {
-		return err
+	// .env dosyasını yükle (eğer varsa)
+	if err := godotenv.Load(); err != nil {
+		log.Println("ℹ️ .env dosyası bulunamadı, sistem değişkenleri kullanılacak.")
 	}
+
+	cfg := config.Load()
 
 	// GORM log seviyesi: production'da sadece hataları göster
 	logLevel := gormlogger.Error
@@ -54,6 +56,11 @@ func Run() error {
 		return fmt.Errorf("auto migrate: %w", err)
 	}
 
+	// Otomatik Admin kontrolü/oluşturma
+	if err := store.EnsureAdminExists(context.Background(), cfg.Admin.Username, cfg.Admin.Password); err != nil {
+		log.Printf("⚠️  Admin oluşturulamadı: %v", err)
+	}
+
 	uploadService := service.NewUploadService(cfg.Paths.UploadsDir)
 	if err := uploadService.EnsureUploadsDir(); err != nil {
 		return fmt.Errorf("create uploads dir: %w", err)
@@ -64,7 +71,7 @@ func Run() error {
 		BotToken: cfg.Telegram.BotToken,
 		ChatID:   cfg.Telegram.ChatID,
 	})
-	authService := service.NewAuthService(cfg.Admin.Username, cfg.Admin.Password)
+	authService := service.NewAuthService(store, cfg.SessionSecret, cfg.Mode == "production")
 
 	engine, err := handler.Load(cfg, catalogService, orderService, authService, uploadService)
 	if err != nil {

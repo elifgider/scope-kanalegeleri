@@ -3,150 +3,302 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Panel</title>
+    <title>Scope Endo - Yönetici Paneli</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      :root {
+        --scope-blue: #1e40af;
+        --scope-light: #f8fafc;
+        --scope-border: #dbe4f0;
+      }
+      body { font-family: 'Inter', sans-serif; background-color: var(--scope-light); color: #1e293b; }
+      .card { border-radius: 1rem; border: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+      .nav-pills .nav-link { border-radius: 0.75rem; font-weight: 600; color: #64748b; padding: 0.6rem 1.2rem; }
+      .nav-pills .nav-link.active { background-color: var(--scope-blue); color: white; }
+      .table thead th { background-color: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.025em; border: none; }
+      .badge-pending { background-color: #fef9c3; color: #854d0e; }
+      .badge-processing { background-color: #dcfce7; color: #166534; }
+      .badge-shipped { background-color: #dbeafe; color: #1e40af; }
+      .badge-cancelled { background-color: #fee2e2; color: #991b1b; }
+      .form-control, .form-select { border-radius: 0.75rem; border: 1px solid #e2e8f0; padding: 0.6rem 1rem; }
+      .form-control:focus, .form-select:focus { border-color: var(--scope-blue); box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1); }
+      .btn { border-radius: 0.75rem; font-weight: 600; padding: 0.6rem 1.2rem; transition: all 0.2s; }
+      .btn-primary { background-color: var(--scope-blue); border: none; }
+      .btn-primary:hover { background-color: #1e3a8a; transform: translateY(-1px); }
+      .upload-panel { border: 1px solid var(--scope-border); border-radius: 1rem; background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%); }
+      .upload-dropzone { border: 1px dashed #93c5fd; border-radius: 1rem; background: #eff6ff; padding: 1rem; transition: border-color 0.2s, background-color 0.2s; }
+      .upload-dropzone.is-dragging { border-color: var(--scope-blue); background: #dbeafe; }
+      .upload-preview { width: 100%; aspect-ratio: 4 / 3; border-radius: 1rem; object-fit: cover; background: #e2e8f0; border: 1px solid var(--scope-border); }
+      .upload-preview-placeholder { width: 100%; aspect-ratio: 4 / 3; border-radius: 1rem; border: 1px dashed var(--scope-border); display: flex; align-items: center; justify-content: center; color: #64748b; background: #f8fafc; }
+      .upload-status { min-height: 1.25rem; }
+      .note-preview { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: help; }
+      .brand-lockup { display: inline-flex; align-items: center; gap: 0.75rem; }
+      .brand-logo-shell { width: 124px; height: 48px; display: flex; align-items: center; justify-content: center; }
+      .brand-logo-shell img { width: 100%; height: 100%; object-fit: contain; }
+      .brand-copy { display: flex; flex-direction: column; gap: 0.1rem; }
+      .brand-copy small { color: #64748b; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    </style>
   </head>
-  <body class="bg-light">
-    <div class="container py-5">
-      <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 align-items-lg-center mb-4">
-        <div>
-          <h1 class="h3 mb-1">Go Admin Panel</h1>
-          <p class="text-secondary mb-0">Ürünleri bu ekrandan yönetebilirsin.</p>
+  <body>
+    <!-- Navbar / Header -->
+    <nav class="bg-white border-bottom py-3 mb-4">
+      <div class="container d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
+        <div class="brand-lockup">
+          <div class="brand-logo-shell">
+            <img src="/static/images/scopelogo.png" alt="Scope Endo" />
+          </div>
+          <div class="brand-copy">
+            <small>Scope Endo</small>
+            <h1 class="h5 fw-bold mb-0">Yönetici Paneli</h1>
+          </div>
         </div>
         <div class="d-flex gap-2">
-          <a href="/" class="btn btn-outline-secondary">Siteye Dön</a>
+          <a href="/" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-sm d-flex align-items-center gap-2">
+            <i data-lucide="external-link" style="width:16px;height:16px;"></i> Siteye Git
+          </a>
           <form method="post" action="/admin/logout">
-            <button type="submit" class="btn btn-outline-danger">Çıkış Yap</button>
+            <button type="submit" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2">
+              <i data-lucide="log-out" style="width:16px;height:16px;"></i> Çıkış
+            </button>
           </form>
         </div>
       </div>
+    </nav>
 
+    <div class="container pb-5">
       {{ if .Message }}
-      <div class="alert alert-info">{{ .Message }}</div>
+      <div class="alert alert-info alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+        {{ .Message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
       {{ end }}
 
-      <div class="row g-4">
-        <div class="col-lg-5">
-          <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-              <div class="d-flex justify-content-between align-items-center mb-3 gap-2">
-                <h2 class="h5 mb-0">{{ if .IsEditing }}Ürünü Düzenle{{ else }}Yeni Ürün Ekle{{ end }}</h2>
-                {{ if .IsEditing }}
-                <a href="/admin" class="btn btn-sm btn-outline-secondary">İptal</a>
-                {{ end }}
+      <!-- Main Tabs -->
+      <ul class="nav nav-pills mb-4 gap-2" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active d-flex align-items-center gap-2" data-bs-toggle="pill" data-bs-target="#tab-dashboard" type="button">
+            <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i> Genel Bakış
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="pill" data-bs-target="#tab-orders" type="button">
+            <i data-lucide="shopping-bag" style="width:18px;height:18px;"></i> Siparişler
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="pill" data-bs-target="#tab-products" type="button">
+            <i data-lucide="package" style="width:18px;height:18px;"></i> Ürünler
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="pill" data-bs-target="#tab-categories" type="button">
+            <i data-lucide="layers" style="width:18px;height:18px;"></i> Kategoriler
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="adminTabsContent">
+        <!-- Tab: Dashboard -->
+        <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel">
+          <!-- Stats Cards -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-3">
+              <div class="card bg-white border-0">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+                      <i data-lucide="package" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="text-success small fw-bold">Toplam</span>
+                  </div>
+                  <h3 class="h2 fw-bold mb-1">{{ .Stats.Total }}</h3>
+                  <p class="text-secondary small mb-0">Toplam Sipariş</p>
+                </div>
               </div>
-              <form class="d-grid gap-3" method="post" action="{{ if .IsEditing }}/admin/products/update{{ else }}/admin/products{{ end }}">
-                {{ if .IsEditing }}
-                <input type="hidden" name="id" value="{{ .FormProduct.ID }}" />
-                {{ end }}
-                <input class="form-control" name="name" placeholder="Ürün adı" value="{{ .FormProduct.Name }}" required />
-                <input class="form-control" name="category" placeholder="Kategori" value="{{ .FormProduct.Category }}" required />
-                <input class="form-control" name="image_url" placeholder="/static/images/... veya /uploads/..." value="{{ .FormProduct.ImageURL }}" required />
-                <input class="form-control" name="price" type="number" step="0.01" placeholder="Fiyat" value="{{ .FormProduct.Price }}" />
-                <textarea class="form-control" name="description" rows="4" placeholder="Açıklama">{{ .FormProduct.Description }}</textarea>
-                <button class="btn btn-primary" type="submit">{{ if .IsEditing }}Güncelle{{ else }}Kaydet{{ end }}</button>
-              </form>
-              <hr class="my-4" />
-              <h3 class="h6 mb-3">Görsel Yükle</h3>
-              <form class="d-grid gap-3" method="post" action="/admin/uploads" enctype="multipart/form-data">
-                {{ if .IsEditing }}
-                <input type="hidden" name="edit_id" value="{{ .FormProduct.ID }}" />
-                {{ end }}
-                <input class="form-control" name="image" type="file" accept="image/png,image/jpeg,image/webp,image/gif" required />
-                <button class="btn btn-outline-primary" type="submit">Görseli Yükle</button>
-              </form>
-              {{ if .UploadedImageURL }}
-              <div class="alert alert-success mt-3 mb-0">
-                Son yüklenen görsel: <code>{{ .UploadedImageURL }}</code>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-white border-0">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning">
+                      <i data-lucide="clock" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="text-warning small fw-bold">Bekleyen</span>
+                  </div>
+                  <h3 class="h2 fw-bold mb-1">{{ .Stats.Pending }}</h3>
+                  <p class="text-secondary small mb-0">Aktif Talepler</p>
+                </div>
               </div>
-              {{ end }}
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-white border-0">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="bg-success bg-opacity-10 p-2 rounded-3 text-success">
+                      <i data-lucide="check-circle" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="text-success small fw-bold">Tamamlanan</span>
+                  </div>
+                  <h3 class="h2 fw-bold mb-1">{{ .Stats.Completed }}</h3>
+                  <p class="text-secondary small mb-0">Teslim Edilenler</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-white border-0">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="bg-danger bg-opacity-10 p-2 rounded-3 text-danger">
+                      <i data-lucide="x-circle" style="width:24px;height:24px;"></i>
+                    </div>
+                    <span class="text-danger small fw-bold">İptal</span>
+                  </div>
+                  <h3 class="h2 fw-bold mb-1">{{ .Stats.Cancelled }}</h3>
+                  <p class="text-secondary small mb-0">İptal Edilenler</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Row -->
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card h-100">
+                <div class="card-body p-4">
+                  <h2 class="h6 fw-bold mb-4">Sipariş Dağılım Grafiği</h2>
+                  <div style="height: 300px;">
+                    <canvas id="orderHistoryChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card h-100">
+                <div class="card-body p-4">
+                  <h2 class="h6 fw-bold mb-4">Durum Özeti</h2>
+                  <div style="height: 300px;">
+                    <canvas id="orderStatusChart"></canvas>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-7">
-          <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-              <h2 class="h5 mb-3">Ürünler</h2>
-              <div class="table-responsive">
-                <table class="table align-middle">
-                  <thead>
-                    <tr>
-                      <th>Ürün</th>
-                      <th>Kategori</th>
-                      <th>Görsel</th>
-                      <th class="text-end">İşlem</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {{ range .Products }}
-                    <tr>
-                      <td>
-                        <div class="fw-semibold">{{ .Name }}</div>
-                        <div class="text-secondary small">{{ .Description }}</div>
-                      </td>
-                      <td>{{ .Category }}</td>
-                      <td class="small text-secondary">
-                        <div>{{ .ImageURL }}</div>
-                        <img src="{{ .ImageURL }}" alt="{{ .Name }}" class="img-fluid rounded mt-2 border" style="max-height:72px;" />
-                      </td>
-                      <td class="text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                          <a href="/admin?edit={{ .ID }}" class="btn btn-sm btn-outline-primary">Düzenle</a>
-                          <form method="post" action="/admin/products/delete" onsubmit="return confirm('Ürün silinsin mi?');">
-                            <input type="hidden" name="id" value="{{ .ID }}" />
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Sil</button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                    {{ end }}
-                  </tbody>
-                </table>
+
+        <!-- Tab: Orders -->
+        <div class="tab-pane fade" id="tab-orders" role="tabpanel">
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="p-4 border-bottom">
+                <h2 class="h5 fw-bold mb-0">Gelen Siparişler</h2>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-4">
-              <h2 class="h5 mb-3">Siparişler</h2>
               <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle mb-0">
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Tür</th>
-                      <th>Müşteri</th>
-                      <th>İletişim</th>
+                      <th class="ps-4">No</th>
+                      <th>Müşteri Bilgileri</th>
                       <th>Ürünler</th>
+                      <th>Müşteri Notu</th>
+                      <th>Yönetici Notu</th>
+                      <th>Durum</th>
                       <th>Tarih</th>
+                      <th class="text-end pe-4">İşlem</th>
                     </tr>
                   </thead>
                   <tbody>
                     {{ if .Orders }}
                       {{ range .Orders }}
                       <tr>
-                        <td>{{ .ID }}</td>
-                        <td><span class="badge text-bg-light">{{ .FormType }}</span></td>
+                        <td class="ps-4 fw-bold text-secondary">#{{ .ID }}</td>
                         <td>
-                          <div class="fw-semibold">{{ .CustomerName }}</div>
-                          <div class="text-secondary small">{{ .CustomerAddress }}</div>
-                        </td>
-                        <td>
-                          <div class="small">{{ .CustomerPhone }}</div>
-                          <div class="text-secondary small">{{ .CustomerEmail }}</div>
+                          <div class="fw-bold">{{ .CustomerName }}</div>
+                          <div class="small text-secondary">{{ .CustomerPhone }} · {{ .CustomerEmail }}</div>
+                          <div class="small text-muted text-truncate" style="max-width: 200px;">{{ .CustomerAddress }}</div>
                         </td>
                         <td>
                           {{ range .Items }}
-                            <div class="small">{{ .ProductName }} · {{ .Quantity }}</div>
+                            <div class="small fw-medium">{{ .ProductName }} <span class="text-muted">x {{ .Quantity }}</span></div>
                           {{ end }}
                         </td>
-                        <td class="small text-secondary">{{ .CreatedAt.Format "02.01.2006 15:04" }}</td>
+                        <td>
+                          {{ if .Note }}
+                          <div class="small text-secondary note-preview" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ .Note }}">{{ .Note }}</div>
+                          {{ else }}
+                          <span class="small text-muted">Yok</span>
+                          {{ end }}
+                        </td>
+                        <td>
+                          {{ if .AdminNote }}
+                          <div class="small text-secondary note-preview" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ .AdminNote }}">{{ .AdminNote }}</div>
+                          {{ else }}
+                          <span class="small text-muted">Yok</span>
+                          {{ end }}
+                        </td>
+                        <td>
+                          {{ if eq .Status "Beklemede" }}<span class="badge badge-pending">Beklemede</span>
+                          {{ else if eq .Status "Hazırlanıyor" }}<span class="badge badge-processing">Hazırlanıyor</span>
+                          {{ else if eq .Status "Kargolandı" }}<span class="badge badge-shipped">Kargolandı</span>
+                          {{ else if eq .Status "İptal" }}<span class="badge badge-cancelled">İptal</span>
+                          {{ else }}<span class="badge bg-light text-dark">{{ .Status }}</span>
+                          {{ end }}
+                        </td>
+                        <td class="small text-secondary">{{ .CreatedAt.Format "02.01 15:04" }}</td>
+                        <td class="text-end pe-4">
+                          <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#orderModal-{{ .ID }}">
+                            <i data-lucide="edit-3" style="width:16px;height:16px;"></i>
+                          </button>
+                          
+                          <!-- Order Detail/Edit Modal -->
+                          <div class="modal fade text-start" id="orderModal-{{ .ID }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content border-0 shadow-lg" style="border-radius: 1.25rem;">
+                                <div class="modal-header border-bottom py-3 px-4">
+                                  <h5 class="modal-title fw-bold">Siparişi Yönet (#{{ .ID }})</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="post" action="/admin/orders/update">
+                                  <div class="modal-body p-4 text-start">
+                                    <input type="hidden" name="id" value="{{ .ID }}" />
+                                    <input type="hidden" name="redirect_tab" value="tab-orders" />
+                                    <div class="mb-3">
+                                      <label class="form-label small fw-bold">Sipariş Durumu</label>
+                                      <select name="status" class="form-select">
+                                        <option value="Beklemede" {{ if eq .Status "Beklemede" }}selected{{ end }}>Beklemede</option>
+                                        <option value="Hazırlanıyor" {{ if eq .Status "Hazırlanıyor" }}selected{{ end }}>Hazırlanıyor</option>
+                                        <option value="Kargolandı" {{ if eq .Status "Kargolandı" }}selected{{ end }}>Kargolandı</option>
+                                        <option value="Tamamlandı" {{ if eq .Status "Tamamlandı" }}selected{{ end }}>Tamamlandı</option>
+                                        <option value="İptal" {{ if eq .Status "İptal" }}selected{{ end }}>İptal</option>
+                                      </select>
+                                    </div>
+                                    <div class="mb-3">
+                                      <label class="form-label small fw-bold">Yönetici Notu</label>
+                                      <textarea name="admin_note" class="form-control" rows="3" placeholder="Bu sipariş hakkında notlar... (Kargo takip no vb.)">{{ .AdminNote }}</textarea>
+                                    </div>
+                                    <div class="p-3 bg-light rounded-3 small">
+                                      <div class="fw-bold mb-2">Müşteri Notu:</div>
+                                      <div class="text-secondary italic">{{ if .Note }}{{ .Note }}{{ else }}Not bırakılmamış.{{ end }}</div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Kapat</button>
+                                    <button type="submit" class="btn btn-primary px-4">Değişiklikleri Kaydet</button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
                       </tr>
                       {{ end }}
                     {{ else }}
                       <tr>
-                        <td colspan="6" class="text-center text-secondary py-4">Henüz sipariş yok.</td>
+                        <td colspan="8" class="text-center py-5">
+                          <i data-lucide="inbox" class="text-muted mb-2" style="width:40px;height:40px;"></i>
+                          <div class="text-secondary">Henüz sipariş bulunmuyor.</div>
+                        </td>
                       </tr>
                     {{ end }}
                   </tbody>
@@ -155,7 +307,406 @@
             </div>
           </div>
         </div>
+
+        <!-- Tab: Products -->
+        <div class="tab-pane fade" id="tab-products" role="tabpanel">
+           <div class="row g-4">
+             <!-- Product List -->
+             <div class="col-lg-8">
+               <div class="card h-100">
+                 <div class="card-body p-4">
+                   <h2 class="h5 fw-bold mb-4">Ürün Listesi</h2>
+                   <div class="table-responsive">
+                     <table class="table align-middle">
+                       <thead>
+                         <tr>
+                           <th>Ürün</th>
+                           <th>Kategori</th>
+                           <th class="text-end">İşlem</th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         {{ range .Products }}
+                         <tr>
+                           <td>
+                             <div class="d-flex align-items-center gap-3">
+                               <img src="{{ .ImageURL }}" class="rounded shadow-sm" style="width:48px;height:48px;object-fit:cover;" />
+                               <div>
+                                 <div class="fw-bold">{{ .Name }}</div>
+                                 <div class="small text-muted">{{ printf "%.2f TL" .Price }}</div>
+                               </div>
+                             </div>
+                           </td>
+                           <td><span class="badge bg-light text-dark border">{{ .Category }}</span></td>
+                           <td class="text-end">
+                             <div class="d-flex justify-content-end gap-2">
+                               <a href="/admin?edit={{ .ID }}#tab-products" class="btn btn-light btn-sm" onclick="showProductTab()">
+                                 <i data-lucide="edit" style="width:14px;height:14px;"></i>
+                               </a>
+                               <form method="post" action="/admin/products/delete" onsubmit="return confirm('Silmek istediğine emin misin?');">
+                                 <input type="hidden" name="id" value="{{ .ID }}" />
+                                 <input type="hidden" name="redirect_tab" value="tab-products" />
+                                 <button type="submit" class="btn btn-light btn-sm text-danger">
+                                   <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                                 </button>
+                               </form>
+                             </div>
+                           </td>
+                         </tr>
+                         {{ end }}
+                       </tbody>
+                     </table>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             <!-- Add/Edit Form -->
+             <div class="col-lg-4">
+               <div class="card border-primary" style="background-color: #fff;">
+                 <div class="card-body p-4">
+                   <h2 class="h5 fw-bold mb-4">{{ if .IsEditing }}Ürünü Düzenle{{ else }}Yeni Ürün Ekle{{ end }}</h2>
+                   <form method="post" action="{{ if .IsEditing }}/admin/products/update{{ else }}/admin/products{{ end }}" class="d-grid gap-3">
+                      {{ if .IsEditing }}<input type="hidden" name="id" value="{{ .FormProduct.ID }}" />{{ end }}
+                      <input type="hidden" name="redirect_tab" value="tab-products" />
+                      <div>
+                        <label class="form-label small fw-bold">Ürün Adı</label>
+                        <input name="name" class="form-control" value="{{ .FormProduct.Name }}" required />
+                      </div>
+                      <div>
+                        <label class="form-label small fw-bold">Kategori</label>
+                        <select name="category" class="form-select" required>
+                          <option value="">Seçiniz...</option>
+                          {{ range .Categories }}
+                          <option value="{{ .Name }}" {{ if eq .Name $.FormProduct.Category }}selected{{ end }}>{{ .Name }}</option>
+                          {{ end }}
+                        </select>
+                        <div class="small text-muted mt-1 px-1">Kategori yoksa yan sekmeden ekleyin.</div>
+                      </div>
+                      <div>
+                        <label class="form-label small fw-bold">Fiyat (Opsiyonel)</label>
+                        <input name="price" type="number" step="0.01" class="form-control" value="{{ .FormProduct.Price }}" />
+                      </div>
+                      <div class="d-grid gap-2">
+                        <input type="hidden" name="image_url" id="imgUrlInput" value="{{ .FormProduct.ImageURL }}" required />
+                        <div class="upload-panel p-3">
+                          <div class="row g-3 align-items-center">
+                            <div class="col-12">
+                              <label class="form-label small fw-bold text-primary mb-2">Ürün Fotoğrafı</label>
+                              <div id="uploadDropzone" class="upload-dropzone">
+                                <div class="d-flex flex-column gap-3">
+                                  <div class="d-flex align-items-center gap-2 text-primary">
+                                    <i data-lucide="image-up" style="width:18px;height:18px;"></i>
+                                    <span class="small fw-bold">Fotoğrafı burada yükleyin</span>
+                                  </div>
+                                  <div class="small text-secondary">Dosyayı sürükleyip bırakın veya seçin. Yükleme tamamlanınca URL alanı otomatik dolar.</div>
+                                  <div class="d-flex flex-column flex-sm-row gap-2">
+                                    <input type="file" id="productImageFile" class="form-control" accept="image/jpeg,image/png,image/webp,image/gif" />
+                                    <button type="button" id="uploadImageBtn" class="btn btn-outline-primary">
+                                      <i data-lucide="upload-cloud" style="width:16px;height:16px;"></i> Yükle
+                                    </button>
+                                  </div>
+                                  <div id="uploadStatus" class="small upload-status text-secondary">{{ if .UploadedImageURL }}Son yüklenen dosya kullanıma hazır.{{ end }}</div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-12">
+                              <div id="imagePreviewWrapper">
+                                {{ if .FormProduct.ImageURL }}
+                                <img src="{{ .FormProduct.ImageURL }}" alt="Ürün görsel önizleme" id="productImagePreview" class="upload-preview" />
+                                {{ else }}
+                                <div id="productImagePreviewPlaceholder" class="upload-preview-placeholder">
+                                  <span class="small">Önizleme burada görünecek</span>
+                                </div>
+                                <img src="" alt="Ürün görsel önizleme" id="productImagePreview" class="upload-preview d-none" />
+                                {{ end }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="form-label small fw-bold">Açıklama</label>
+                        <textarea name="description" class="form-control" rows="3">{{ .FormProduct.Description }}</textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary py-2 d-flex align-items-center justify-content-center gap-2">
+                        <i data-lucide="check-circle" style="width:18px;height:18px;"></i> {{ if .IsEditing }}Güncelle{{ else }}Kaydet{{ end }}
+                      </button>
+                      {{ if .IsEditing }}<a href="/admin#tab-products" class="btn btn-light btn-sm text-secondary">İptal ve Temizle</a>{{ end }}
+                   </form>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+
+        <!-- Tab: Categories -->
+        <div class="tab-pane fade" id="tab-categories" role="tabpanel">
+           <div class="row g-4 text-start">
+             <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h2 class="h5 fw-bold mb-4">Kategori Listesi</h2>
+                    <ul class="list-group list-group-flush">
+                      {{ if .Categories }}
+                        {{ range .Categories }}
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 py-3">
+                          <div class="fw-medium text-dark">{{ .Name }}</div>
+                          <form method="post" action="/admin/categories/delete" onsubmit="return confirm('Bu kategoriyi silmek istediğine emin misin?');">
+                            <input type="hidden" name="id" value="{{ .ID }}" />
+                            <input type="hidden" name="redirect_tab" value="tab-categories" />
+                            <button type="submit" class="btn btn-link py-0 text-danger text-decoration-none">
+                              <i data-lucide="x-circle" style="width:18px;height:18px;"></i>
+                            </button>
+                          </form>
+                        </li>
+                        {{ end }}
+                      {{ else }}
+                        <li class="text-secondary py-3">Henüz bir kategori eklenmemiş.</li>
+                      {{ end }}
+                    </ul>
+                  </div>
+                </div>
+             </div>
+             <div class="col-md-6 text-start">
+                <div class="card">
+                  <div class="card-body p-4">
+                    <h2 class="h5 fw-bold mb-4">Yeni Kategori Ekle</h2>
+                    <form method="post" action="/admin/categories" class="d-grid gap-3">
+                      <input type="hidden" name="redirect_tab" value="tab-categories" />
+                      <div>
+                        <label class="form-label small fw-bold">Kategori Adı</label>
+                        <input name="name" class="form-control" placeholder="Örn: Elmas Frezler" required />
+                      </div>
+                      <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2">
+                        <i data-lucide="plus" style="width:18px;height:18px;"></i> Kategoriyi Kaydet
+                      </button>
+                    </form>
+                  </div>
+                </div>
+             </div>
+           </div>
+        </div>
       </div>
     </div>
+
+    <!-- BS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Initialize Lucide Icons
+      lucide.createIcons();
+
+      // Preserve active tab on reload
+      document.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash;
+        if (hash) {
+          const tabEl = document.querySelector(`[data-bs-target="${hash}"]`);
+          if (tabEl) {
+            const tab = new bootstrap.Tab(tabEl);
+            tab.show();
+          }
+        }
+
+        const imageURLInput = document.getElementById('imgUrlInput');
+        const fileInput = document.getElementById('productImageFile');
+        const uploadButton = document.getElementById('uploadImageBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const previewImage = document.getElementById('productImagePreview');
+        const previewPlaceholder = document.getElementById('productImagePreviewPlaceholder');
+        const dropzone = document.getElementById('uploadDropzone');
+
+        const setStatus = (message, tone = 'muted') => {
+          if (!uploadStatus) return;
+          uploadStatus.className = `small upload-status text-${tone}`;
+          uploadStatus.textContent = message;
+        };
+
+        const updatePreview = (url) => {
+          if (!previewImage) return;
+          if (url) {
+            previewImage.src = url;
+            previewImage.classList.remove('d-none');
+            if (previewPlaceholder) {
+              previewPlaceholder.classList.add('d-none');
+            }
+            return;
+          }
+
+          previewImage.src = '';
+          previewImage.classList.add('d-none');
+          if (previewPlaceholder) {
+            previewPlaceholder.classList.remove('d-none');
+          }
+        };
+
+        const setSelectedFile = (file) => {
+          if (!fileInput || !file) return;
+          const transfer = new DataTransfer();
+          transfer.items.add(file);
+          fileInput.files = transfer.files;
+          setStatus(`${file.name} secildi. Yuklemek icin butona basin.`);
+        };
+
+        const uploadSelectedFile = async () => {
+          if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+            setStatus('Once bir dosya secin.', 'warning');
+            return;
+          }
+
+          const file = fileInput.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+
+          uploadButton.disabled = true;
+          fileInput.disabled = true;
+          setStatus('Gorsel yukleniyor...', 'primary');
+
+          try {
+            const response = await fetch('/admin/uploads', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+            const result = await response.json();
+
+            if (!response.ok) {
+              throw new Error(result.error || 'Gorsel yuklenemedi');
+            }
+
+            imageURLInput.value = result.image_url || '';
+            updatePreview(imageURLInput.value);
+            setStatus('Gorsel yuklendi. URL alani otomatik guncellendi.', 'success');
+          } catch (error) {
+            setStatus(error.message || 'Gorsel yuklenemedi.', 'danger');
+          } finally {
+            uploadButton.disabled = false;
+            fileInput.disabled = false;
+          }
+        };
+
+        if (imageURLInput) {
+          updatePreview(imageURLInput.value.trim());
+          imageURLInput.addEventListener('input', (event) => {
+            updatePreview(event.target.value.trim());
+          });
+        }
+
+        if (uploadButton) {
+          uploadButton.addEventListener('click', uploadSelectedFile);
+        }
+
+        if (fileInput) {
+          fileInput.addEventListener('change', () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+              setStatus('Yukleme icin dosya secmediniz.');
+              return;
+            }
+            setStatus(`${file.name} secildi. Yuklemek icin butona basin.`);
+          });
+        }
+
+        if (dropzone) {
+          ['dragenter', 'dragover'].forEach((eventName) => {
+            dropzone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              dropzone.classList.add('is-dragging');
+            });
+          });
+
+          ['dragleave', 'drop'].forEach((eventName) => {
+            dropzone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              dropzone.classList.remove('is-dragging');
+            });
+          });
+
+          dropzone.addEventListener('drop', (event) => {
+            const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+            if (!file) {
+              return;
+            }
+            setSelectedFile(file);
+          });
+        }
+
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => {
+          new bootstrap.Tooltip(element);
+        });
+      });
+
+      // Special handling for editing products (ensure tab is active)
+      function showProductTab() {
+        const tabEl = document.querySelector('[data-bs-target="#tab-products"]');
+        const tab = new bootstrap.Tab(tabEl);
+        tab.show();
+      }
+      
+      // Auto-switch to products tab if we are editing
+      if (window.location.search.includes('edit=')) {
+        showProductTab();
+      }
+
+      // Initialize Charts
+      const statusData = {
+        pending: {{ .Stats.Pending }},
+        processing: {{ .Stats.Processing }},
+        shipped: {{ .Stats.Shipped }},
+        completed: {{ .Stats.Completed }},
+        cancelled: {{ .Stats.Cancelled }}
+      };
+
+      // Order Status Pie Chart
+      const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+      new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['Beklemede', 'Hazırlanıyor', 'Kargolandı', 'Tamamlandı', 'İptal'],
+          datasets: [{
+            data: [statusData.pending, statusData.processing, statusData.shipped, statusData.completed, statusData.cancelled],
+            backgroundColor: ['#fef9c3', '#dcfce7', '#dbeafe', '#1e40af', '#fee2e2'],
+            borderWidth: 0,
+            hoverOffset: 10
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' }
+          },
+          cutout: '70%'
+        }
+      });
+
+      // Order History Bar Chart
+      const ctxHistory = document.getElementById('orderHistoryChart').getContext('2d');
+      new Chart(ctxHistory, {
+        type: 'bar',
+        data: {
+          labels: ['Beklemede', 'Hazırlanıyor', 'Kargolandı', 'Tamamlandı', 'İptal'],
+          datasets: [{
+            label: 'Sipariş Sayısı',
+            data: [statusData.pending, statusData.processing, statusData.shipped, statusData.completed, statusData.cancelled],
+            backgroundColor: '#1e40af',
+            borderRadius: 8,
+            barThickness: 40
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { display: false } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    </script>
   </body>
 </html>
