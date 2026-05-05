@@ -12,7 +12,7 @@ if [ -z "$host" ]; then
 fi
 
 echo "🚀 Dağıtım başlıyor: $host"
-GOOS=linux GOARCH=amd64 go build -o app_binary ./cmd/app/main.go
+GOOS=linux GOARCH=amd64 go build -o app_binary .
 
 ssh root@$host "mkdir -p /home/$app"
 rsync -avz --delete $copy root@$host:/home/$app/

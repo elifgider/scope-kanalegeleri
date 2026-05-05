@@ -29,6 +29,14 @@ func Run() error {
 
 	cfg := config.Load()
 
+	// Kritik güvenlik değerlerini kontrol et
+	if cfg.SessionSecret == "" {
+		return fmt.Errorf("SESSION_SECRET ortam değişkeni tanımlı değil — uygulama başlatılamaz")
+	}
+	if cfg.Admin.Password == "" {
+		return fmt.Errorf("GO_ADMIN_PASSWORD ortam değişkeni tanımlı değil — uygulama başlatılamaz")
+	}
+
 	// GORM log seviyesi: production'da sadece hataları göster
 	logLevel := gormlogger.Error
 	if cfg.Mode == "development" {

@@ -67,7 +67,7 @@ func Load() Settings {
 			UploadsDir:   envOrDefault("UPLOADS_DIR", "uploads"),
 			StaticDir:    envOrDefault("STATIC_DIR", "public/static"),
 		},
-		SessionSecret: envOrDefault("SESSION_SECRET", "super-secret-key-change-me"),
+		SessionSecret: os.Getenv("SESSION_SECRET"),
 		ContactName:   envOrDefault("CONTACT_NAME", ""),
 		ContactPhone:  envOrDefault("CONTACT_PHONE", ""),
 		ContactEmail:  envOrDefault("CONTACT_EMAIL", ""),

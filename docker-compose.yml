@@ -11,7 +11,8 @@ services:
     env_file:
       - .env
     environment:
-      APP_ENV: production
+      APP_ENV: development
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-kanalegeleri}?sslmode=disable
     depends_on:
       - postgres
     volumes:
@@ -29,8 +30,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-kanalegeleri}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
