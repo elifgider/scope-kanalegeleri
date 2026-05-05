@@ -4,7 +4,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Scope Endo</title>
+  
+  <!-- SEO Etiketleri -->
+  <title>Scope Endo - Kanal Eğeleri ve Endodonti Ürünleri | ScopeEndo</title>
+  <meta name="description" content="Scope Endo kalitesiyle en iyi kanal eğesi, kanal eğeleri ve endodonti ürünlerini hemen inceleyin. Scopeendo kanalegeleri uygun fiyatlar ve hızlı sipariş imkanıyla." />
+  <meta name="keywords" content="scopeendo, kanal egeleri, kanal eğesi, kanalegeleri, kanal eğeleri, endodonti, endodonti ürünleri, diş hekimliği malzemeleri, k7 gold, scope endo" />
+  <meta name="author" content="Scope Endo" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph (Sosyal Medya ve WhatsApp Paylaşımları İçin) -->
+  <meta property="og:title" content="Scope Endo - Profesyonel Kanal Eğeleri" />
+  <meta property="og:description" content="En çok tercih edilen kanal eğesi ve endodonti malzemeleri Scope Endo'da. İncelemek için tıklayın." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="tr_TR" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
   <!-- Select2 CSS -->
@@ -922,7 +934,30 @@
 
       saveCart();
       renderCart();
-      cartCanvas.show();
+      
+      if (window.innerWidth < 992) {
+        showToast('Sepete eklendi');
+      } else {
+        cartCanvas.show();
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(50px); opacity: 0; transition: all 0.3s ease; z-index: 9999; background: #22c55e; color: white; padding: 10px 20px; border-radius: 50px; font-size: 14px; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;';
+      toast.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ${message}`;
+      document.body.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+      });
+
+      setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(50px)';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 2000);
     }
 
     function updateCartItem(productId, quantity) {

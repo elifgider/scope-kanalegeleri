@@ -30,6 +30,8 @@ func Load(
 	// Static dosyalar
 	r.Static("/static", cfg.Paths.StaticDir)
 	r.Static("/uploads", cfg.Paths.UploadsDir)
+	r.StaticFile("/robots.txt", "public/robots.txt")
+	r.StaticFile("/sitemap.xml", "public/sitemap.xml")
 
 	h, err := NewHTTPHandler(cfg, catalog, orders, auth, uploads)
 	if err != nil {
